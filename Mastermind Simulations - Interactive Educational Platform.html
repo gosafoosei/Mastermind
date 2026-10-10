@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastermind Simulations - Visualized Learning</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for coding aesthetics & stencil logo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@200;300;400;500;600&family=Inter:wght@300;400;500;600;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        code: ['"Fira Code"', 'monospace'],
+                        stencil: ['"Saira Stencil One"', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        silver: {
+                            100: '#f3f4f6',
+                            300: '#d1d5db',
+                            500: '#9ca3af',
+                            700: '#4b5563',
+                            900: '#1f2937',
+                        }
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2.5s infinite',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(200%)' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 0.4, transform: 'scale(1)' },
+                            '50%': { opacity: 0.8, transform: 'scale(1.05)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom background gradient with rich silver and obsidian depth */
+        body {
+            background: radial-gradient(circle at 50% 20%, #1e2430 0%, #0d1117 60%, #05070a 100%);
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism styling */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Shiny CTA Button FX */
+        .shiny-btn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #d1d5db 50%, #9ca3af 100%);
+            color: #05070a;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .shiny-btn:hover {
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 1);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .shiny-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                60deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.8) 50%,
+                transparent 70%
+            );
+            transform: rotate(30deg);
+            animation: shimmer 4s infinite;
+        }
+
+        /* Floating particles canvas layer */
+        #math-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .preview-banner {
+            position: fixed;
+            inset: 1rem 1rem auto 1rem;
+            z-index: 60;
+            display: none;
+        }
+
+        .preview-banner.visible {
+            display: block;
+        }
+
+        .preview-banner-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            padding: 1rem 1.1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.9rem;
+        }
+
+        .preview-banner-inner strong {
+            display: block;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.76rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #f8fafc;
+        }
+
+        .preview-banner-inner p {
+            margin: 0.25rem 0 0;
+            color: #dbe4ef;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .preview-banner-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .preview-button {
+            border: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #d1d5db 50%, #9ca3af 100%);
+            color: #05070a;
+            border-radius: 999px;
+            padding: 0.7rem 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .preview-close {
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            color: #edf2f7;
+            border-radius: 999px;
+            padding: 0.7rem 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-white selection:text-black">
+
+    <div id="preview-banner" class="preview-banner" aria-live="polite">
+        <div class="preview-banner-inner">
+            <div>
+                <strong>Local preview required</strong>
+                <p>This site works best when served over HTTP. The browser blocks direct file access in some folders.</p>
+            </div>
+            <div class="preview-banner-actions">
+                <button id="open-local-preview" class="preview-button" type="button">Open local preview</button>
+                <button id="dismiss-preview-banner" class="preview-close" type="button">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="math-canvas"></canvas>
+
+    <header class="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 group cursor-pointer">
+            <div class="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-lg shadow-white/10 group-hover:scale-105 transition-transform duration-300">
+                <span class="font-stencil text-2xl text-black select-none tracking-tighter">M</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-code font-light tracking-wider text-lg text-white group-hover:text-silver-300 transition-colors">MASTERMIND</span>
+                <span class="text-[10px] uppercase tracking-widest text-gray-400 font-mono -mt-1">Simulations</span>
+            </div>
+        </div>
+
+        <!-- Right Side Controls / Status -->
+        <div class="hidden md:flex items-center gap-6 font-code text-xs text-gray-400">
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+            <a href="#about" class="hover:text-white transition-colors">About</a>
+            <a href="#labs" class="hover:text-white transition-colors">Labs</a>
+            <button onclick="toggleModal('info-modal')" class="hover:text-white transition-colors">
+                <i class="fa-solid fa-circle-info text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-1 flex flex-col justify-center items-center px-6 max-w-5xl mx-auto text-center py-12">
+        
+        <!-- Platform Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel text-xs font-code font-light text-silver-300 mb-8 border border-white/10 shadow-inner">
+            <i class="fa-solid fa-atom text-silver-400"></i>
+            <span>Interactive Educational Environment</span>
+        </div>
+
+        <!-- Main Title -->
+        <h1 class="font-code font-extralight text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-white mb-6 leading-tight">
+            Mastermind <br class="hidden sm:inline"/>
+            <span class="font-light text-transparent bg-clip-text bg-gradient-to-r from-white via-silver-300 to-gray-500">Simulations</span>
+        </h1>
+
+        <!-- Subtitle / Tagline -->
+        <p class="font-sans italic text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl font-light leading-relaxed mb-10">
+            "A place where lessons are visualized into real-time simulations to enhance understanding and practicality."
+        </p>
+
+        <!-- Main CTA Button -->
+        <div class="flex flex-col sm:flex-row items-center gap-4 mb-16">
+            <button onclick="openSimulationModal()" class="shiny-btn px-8 py-4 rounded-xl font-code font-semibold text-sm sm:text-base tracking-wider flex items-center gap-3 group cursor-pointer">
+                <span>SEE SIMULATION LABS</span>
+                <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+            </button>
+
+            <button onclick="scrollToFeatured()" class="glass-panel hover:bg-white/10 text-gray-300 hover:text-white px-6 py-4 rounded-xl font-code text-sm tracking-wider flex items-center gap-2 transition-all cursor-pointer">
+                <i class="fa-solid fa-compass text-gray-400"></i>
+                <span>EXPLORE MODULES</span>
+            </button>
+        </div>
+
+        <div id="labs" class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 text-left mt-4">
+            <a href="Mastermind Physics Motion Lab.html" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline" aria-label="Open Projectile Motion Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-atom text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Physics · Projectile Motion</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Set launch conditions and explore trajectory, velocity, flight time, range, and height.</p></a>
+            <a href="Mastermind Circle Segments Lab.html" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline" aria-label="Open Circle Segments Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-circle-notch text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Mathematics · Circle Segments</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Explore chords, arcs, sectors, and segment areas with an interactive diagram and practice challenges.</p></a>
+            <a href="Mastermind Computing Lab.html" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline" aria-label="Open Computing Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-microchip text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Computer Science · Data & Logic</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Operate stacks and queues, step through a search, and test digital logic gates.</p></a>
+        </div>
+    </main>
+
+    <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 font-code text-xs text-gray-500">
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-silver-500"></span>
+            <span>Created by Team Mastermind</span>
+        </div>
+        <div class="flex gap-6">
+            <span class="hover:text-gray-300 transition-colors">Interactive Classroom Suite</span>
+            <span class="hover:text-gray-300 transition-colors">v1.0.4</span>
+        </div>
+    </footer>
+
+    <!-- Interactive Lab Selector Modal -->
+    <div id="sim-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel bg-stone-900/90 border border-white/15 rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="toggleModal('sim-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center font-stencil text-xl">M</div>
+                <div>
+                    <h2 class="font-code text-white text-lg font-medium">Simulation Labs Directory</h2>
+                    <p class="text-xs text-gray-400">Select an interactive lab environment</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mb-6">
+                <a href="Mastermind Physics Motion Lab.html" class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/30 cursor-pointer flex items-center justify-between group transition-all no-underline"><div><div class="font-code text-sm text-white group-hover:text-silver-300">Lab #01: Projectile Motion</div><div class="text-xs text-gray-400 mt-1">Change launch conditions and explore the live trajectory and measurements.</div></div><span class="px-3 py-1 text-[10px] font-code bg-white/10 text-white rounded-full group-hover:bg-white group-hover:text-black transition-colors">OPEN LAB</span></a>
+                <a href="Mastermind Circle Segments Lab.html" class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/30 cursor-pointer flex items-center justify-between group transition-all no-underline"><div><div class="font-code text-sm text-white group-hover:text-silver-300">Lab #02: Circle Segments</div><div class="text-xs text-gray-400 mt-1">Explore arcs, chords, sectors, and segment areas with interactive practice.</div></div><span class="px-3 py-1 text-[10px] font-code bg-white/10 text-white rounded-full group-hover:bg-white group-hover:text-black transition-colors">OPEN LAB</span></a>
+                <a href="Mastermind Computing Lab.html" class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/30 cursor-pointer flex items-center justify-between group transition-all no-underline"><div><div class="font-code text-sm text-white group-hover:text-silver-300">Lab #03: Data Structures & Logic</div><div class="text-xs text-gray-400 mt-1">Operate a stack and queue, trace a search, and test gate outputs.</div></div><span class="px-3 py-1 text-[10px] font-code bg-white/10 text-white rounded-full group-hover:bg-white group-hover:text-black transition-colors">OPEN LAB</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel bg-stone-900/90 border border-white/15 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="toggleModal('info-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="font-code text-white text-base font-medium mb-3">About Mastermind</h3>
+            <p class="text-xs text-gray-300 leading-relaxed font-sans mb-4">
+                Mastermind is an educational initiative dedicated to bridging theoretical concepts and practical visual learning. Through custom simulations, students and teachers interactively explore complex STEM principles in real time.
+            </p>
+            <button onclick="toggleModal('info-modal')" class="w-full py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg font-code text-xs transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Floating Math & Geometry Vector Canvas
+        const canvas = document.getElementById('math-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+
+        // Math symbols, equations & geometric shapes
+        const symbols = [
+            'f(x) = ∫ dx', 'E = mc²', '∇ × B', 'lim x→∞', 'sin(θ)', 
+            'λ', 'π', '∑', 'Δx', '√(-1)', 'θ', 'Ω', 'y = mx + c',
+            'a² + b² = c²', '∂f/∂x', '∞', '≈'
+        ];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class MathParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.type = Math.floor(Math.random() * 3); // 0: Symbol, 1: Triangle, 2: Cube/Square
+                this.text = symbols[Math.floor(Math.random() * symbols.length)];
+                this.size = Math.random() * 10 + 10;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4 - 0.2; // Slight upward bias
+                this.opacity = Math.random() * 0.25 + 0.05; // Faint background effect
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.01;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+
+                // Wrap around screen bounds floating away towards corners/edges
+                if (this.x < -50 || this.x > width + 50 || this.y < -50 || this.y > height + 50) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.fillStyle = `rgba(200, 210, 225, ${this.opacity})`;
+                ctx.strokeStyle = `rgba(200, 210, 225, ${this.opacity})`;
+                ctx.lineWidth = 1;
+
+                if (this.type === 0) {
+                    // Render Math Equation / Symbol
+                    ctx.font = `${this.size}px "Fira Code", monospace`;
+                    ctx.fillText(this.text, 0, 0);
+                } else if (this.type === 1) {
+                    // Render Geometric Vector Triangle
+                    ctx.beginPath();
+                    ctx.moveTo(0, -this.size);
+                    ctx.lineTo(this.size, this.size);
+                    ctx.lineTo(-this.size, this.size);
+                    ctx.closePath();
+                    ctx.stroke();
+                } else {
+                    // Render Geometric Vector Polygon / Cube Frame
+                    ctx.beginPath();
+                    ctx.rect(-this.size / 2, -this.size / 2, this.size, this.size);
+                    ctx.stroke();
+                    // Diagonals for 3D vector representation
+                    ctx.beginPath();
+                    ctx.moveTo(-this.size / 2, -this.size / 2);
+                    ctx.lineTo(this.size / 2, this.size / 2);
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // Initialize particles
+        function initParticles() {
+            particles = [];
+            const count = Math.min(Math.floor(window.innerWidth / 20), 45);
+            for (let i = 0; i < count; i++) {
+                particles.push(new MathParticle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Connect nearby floating geometry nodes with faint subtle vector lines
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 140) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.03 * (1 - dist / 140)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Window resize event handler
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        // Initialize background animation on load
+        window.onload = function() {
+            resizeCanvas();
+            initParticles();
+            animate();
+        };
+
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            } else {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function openSimulationModal() {
+            toggleModal('sim-modal');
+        }
+
+        function scrollToFeatured() {
+            document.getElementById('labs').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        const previewBanner = document.getElementById('preview-banner');
+        const openLocalPreviewButton = document.getElementById('open-local-preview');
+        const dismissPreviewButton = document.getElementById('dismiss-preview-banner');
+        const localPreviewUrl = 'http://localhost:8000/Mastermind%20Simulations%20-%20Interactive%20Educational%20Platform.html';
+
+        if (window.location.protocol === 'file:') {
+            previewBanner.classList.add('visible');
+        }
+
+        if (openLocalPreviewButton) {
+            openLocalPreviewButton.addEventListener('click', () => {
+                window.location.href = localPreviewUrl;
+            });
+        }
+
+        if (dismissPreviewButton) {
+            dismissPreviewButton.addEventListener('click', () => {
+                previewBanner.classList.remove('visible');
+            });
+        }
+    </script>
+</body>
+</html>
