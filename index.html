@@ -669,6 +669,31 @@
         #view-circle .hint{font-size:.85rem;color:var(--mut);margin:6px 0}
         #view-circle .fb{font-weight:700;margin:8px 0;font-family:"Trebuchet MS",system-ui,sans-serif}#view-circle .fb.ok{color:var(--ok)}#view-circle .fb.no{color:var(--hl)}
         #view-circle .hide{display:none}
+
+        /* ============ PRESENTATIONAL POLISH ============ */
+        /* Hub: equal-height lab cards with a quiet lift */
+        #labs { grid-auto-rows: 1fr; }
+        #labs > a { display: flex; flex-direction: column; height: 100%; }
+        #labs > a > p { flex: 1; }
+        .glass-card { transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease; }
+        .glass-card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px -14px rgba(0,0,0,.65); }
+        /* Bank: answered-progress meter */
+        .bank-meter { height: 4px; border-radius: 9999px; background: rgba(255,255,255,.08); overflow: hidden; }
+        .bank-meter > i { display: block; height: 100%; background: linear-gradient(90deg,#6ee7b7,#34d399); border-radius: inherit; transition: width .35s ease; }
+        /* Theory: part chips + marks pill */
+        #theory-list > details { transition: border-color .2s ease; }
+        #theory-list > details:hover { border-color: rgba(255,255,255,.22); }
+        .tq-chip { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 9px; letter-spacing: .12em; padding: 2px 8px; border-radius: 9999px; white-space: nowrap; }
+        .tq-chip.p1 { background: rgba(56,189,248,.12); color: #7dd3fc; border: 1px solid rgba(56,189,248,.28); }
+        .tq-chip.p2 { background: rgba(110,231,183,.12); color: #6ee7b7; border: 1px solid rgba(110,231,183,.28); }
+        .tq-marks { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 9px; letter-spacing: .1em; color: #9ca3af; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); padding: 2px 8px; border-radius: 9999px; white-space: nowrap; }
+        /* Scanned pages: page badge + hover */
+        .scan-thumb { position: relative; transition: transform .2s ease, border-color .2s ease; }
+        .scan-thumb::after { content: attr(data-page); position: absolute; left: 5px; top: 5px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 8.5px; letter-spacing: .1em; background: rgba(0,0,0,.75); color: #d1d5db; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,.15); }
+        .scan-thumb:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.45); }
+        /* Lightbox close button */
+        .scan-close { position: absolute; top: 16px; right: 20px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.6); color: #e5e7eb; font-size: 18px; line-height: 1; cursor: pointer; transition: all .2s ease; }
+        .scan-close:hover { background: #fff; color: #000; border-color: #fff; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans antialiased selection:bg-white selection:text-black">
@@ -716,18 +741,18 @@
                 </div>
 
                 <!-- Main Title -->
-                <h1 class="font-code font-extralight text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-white mb-6 leading-tight">
+                <h1 class="font-code font-extralight text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-white mb-3 leading-tight">
                     Mastermind <br class="hidden sm:inline"/>
-                    <span class="font-light text-transparent bg-clip-text bg-gradient-to-r from-white via-silver-300 to-gray-500">Simulations</span>
+                    <span class="block font-semibold text-2xl sm:text-4xl md:text-5xl lg:text-6xl tracking-[0.22em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-silver-300 via-white to-silver-300 pb-2">Simulations</span>
                 </h1>
 
                 <!-- Subtitle / Tagline -->
-                <p class="font-sans italic text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl font-light leading-relaxed mb-10 self-center">
+                <p class="font-sans text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl font-light leading-relaxed mb-10 self-center">
                     "A place where lessons are visualized into real-time simulations to enhance understanding and practicality."
                 </p>
 
                 <!-- Main CTA Buttons -->
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
                     <button onclick="openSimulationModal()" class="shiny-btn px-8 py-4 rounded-xl font-code font-semibold text-sm sm:text-base tracking-wider flex items-center gap-3 group cursor-pointer">
                         <span>SEE SIMULATION LABS</span>
                         <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
@@ -739,11 +764,13 @@
                     </button>
                 </div>
 
+                <p class="font-code text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-4 text-center">The labs · pick a subject</p>
+
                 <div id="labs" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left mt-4">
-                    <a href="#physics" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline" aria-label="Open Projectile Motion Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-atom text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Physics · Projectile Motion</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Set launch conditions and explore trajectory, velocity, flight time, range, and height.</p></a>
-                    <a href="#circle" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline" aria-label="Open Circle Segments Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-circle-notch text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Mathematics · Circle Segments</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Explore chords, arcs, sectors, and segment areas with an interactive diagram and practice challenges.</p></a>
-                    <a href="#computing" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline" aria-label="Open Computing Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-microchip text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Computer Science · Data & Logic</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Operate stacks and queues, step through a search, and test digital logic gates.</p></a>
-                    <a href="#skeletal" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline" aria-label="Open Skeletal System Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-bone text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Biology · Skeletal System</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Explore a medical-grade 3D skeleton — clinical bone cards, region-by-region labelling, bone hunt and a graded exam.</p></a>
+                    <a href="#physics" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline h-full" aria-label="Open Projectile Motion Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-atom text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Physics · Projectile Motion</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Set launch conditions and explore trajectory, velocity, flight time, range, and height.</p></a>
+                    <a href="#circle" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline h-full" aria-label="Open Circle Segments Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-circle-notch text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Mathematics · Circle Segments</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Explore chords, arcs, sectors, and segment areas with an interactive diagram and practice challenges.</p></a>
+                    <a href="#computing" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline h-full" aria-label="Open Computing Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-microchip text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Computer Science · Data & Logic</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Operate stacks and queues, step through a search, and test digital logic gates.</p></a>
+                    <a href="#skeletal" class="glass-card p-5 rounded-xl cursor-pointer group block no-underline h-full" aria-label="Open Skeletal System Lab"><div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-silver-300 group-hover:bg-white group-hover:text-black transition-all"><i class="fa-solid fa-bone text-lg"></i></div><h3 class="font-code text-white text-sm font-medium mb-1 flex items-center justify-between"><span>Biology · Skeletal System</span><i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-white transition-colors"></i></h3><p class="text-xs text-gray-400 font-light leading-snug">Explore a medical-grade 3D skeleton — 200 objectives with answers, theory with model answers, SSCE past papers and a graded exam.</p></a>
                 </div>
             </div>
         </section>
@@ -1433,7 +1460,7 @@
         </div>
         <div class="flex gap-6">
             <span>Interactive Classroom Suite</span>
-            <span>v1.5.0</span>
+            <span>v1.6.0</span>
         </div>
     </footer>
 
@@ -3847,9 +3874,13 @@
                 if (bank.i < 0) bank.i = list.length - 1;
                 const { q, idx } = list[bank.i];
                 const answered = q.chosen !== undefined;
+                const scope = bankList();
+                const answeredN = scope.filter(x => x.q.chosen !== undefined).length;
+                const pct = scope.length ? Math.round(answeredN / scope.length * 100) : 0;
                 $('bank-progress').textContent = bankStats();
                 $('bank-body').innerHTML = `
                     <span class="badge-tag">PART ${q.p} · ${q.secName ? q.secName.toUpperCase() : ''} · Q${idx + 1}/${MSEC_Q.length}</span>
+                    <div class="bank-meter mt-2.5" title="${answeredN} of ${scope.length} answered"><i style="width:${pct}%"></i></div>
                     ${q.img ? `<img src="${q.img}" alt="diagram" class="mt-2 max-h-44 rounded-lg border border-white/10 bg-white/90 p-1.5">` : ''}
                     <p class="text-xs text-gray-200 leading-relaxed mt-2">${q.q}</p>
                     <div class="space-y-2 mt-3">${q.a.map((t, i) =>
@@ -3883,12 +3914,12 @@
             function renderTheory() {
                 const list = THEORY_Q.map((t, i) => ({ t, i })).filter(x => theoryFilter.f === 'all' || x.t.p === +theoryFilter.f);
                 const marks = list.reduce((s, x) => s + x.t.q.reduce((m, sp) => m + (sp.m || 0), 0), 0);
-                $('theory-list').innerHTML = (list.length ? `<p class="font-code text-[9px] uppercase tracking-widest text-gray-500 mb-2">${list.length} questions · ${marks} marks total</p>` : '<p class="hint">No questions in this filter.</p>') + list.map(({ t, i }) => `
+                $('theory-list').innerHTML = (list.length ? `<p class="font-code text-[9px] uppercase tracking-widest text-gray-500 mb-2 border-b border-white/5 pb-2">${list.length} questions · ${marks} marks total</p>` : '<p class="hint">No questions in this filter.</p>') + list.map(({ t, i }) => `
                     <details class="rounded-xl border border-white/10 bg-black/30 overflow-hidden">
-                        <summary class="px-3 py-2.5 flex items-start gap-2 text-xs text-gray-200 font-light leading-snug">
-                            <span class="font-code text-[9px] uppercase tracking-widest text-gray-500 mt-0.5 shrink-0">P${t.p} · Q${t.n}</span>
-                            <span>${t.q[0].t}</span>
-                            <span class="ml-auto font-code text-[9px] text-gray-500 shrink-0 mt-0.5">${t.q.reduce((m, sp) => m + (sp.m || 0), 0)} mk</span>
+                        <summary class="px-3 py-2.5 flex items-start gap-2.5 text-xs text-gray-200 font-light leading-snug cursor-pointer">
+                            <span class="tq-chip p${t.p} mt-0.5">P${t.p} · Q${t.n}</span>
+                            <span class="flex-1">${t.q[0].t}</span>
+                            <span class="tq-marks mt-0.5">${t.q.reduce((m, sp) => m + (sp.m || 0), 0)} MK</span>
                         </summary>
                         <div class="px-3 pb-3 pt-1 border-t border-white/5">
                             ${t.q.map(sp => `<p class="text-[11px] text-gray-300 leading-relaxed mt-1.5"><b class="font-code text-gray-500">(${sp.l})</b> ${sp.t}${sp.m ? ' <span class="font-code text-[9px] text-gray-600">[' + sp.m + ' marks]</span>' : ''}</p>`).join('')}
@@ -3909,7 +3940,7 @@
             });
             function renderScans(elId, pages, label) {
                 $(elId).innerHTML = pages.map((p, i) => `
-                    <button class="scan-thumb rounded-lg border border-white/10 bg-black/40 overflow-hidden hover:border-white/40 transition-all cursor-pointer p-0" data-src="${p}" data-cap="${label} — page ${i + 1} of ${pages.length}" title="${label} — page ${i + 1}">
+                    <button class="scan-thumb rounded-lg border border-white/10 bg-black/40 overflow-hidden cursor-pointer p-0" data-page="PAGE ${i + 1}" data-src="${p}" data-cap="${label} — page ${i + 1} of ${pages.length}" title="${label} — page ${i + 1}">
                         <img src="${p}" alt="${label} page ${i + 1}" class="w-full h-auto block" loading="lazy">
                     </button>`).join('');
                 $(elId).querySelectorAll('.scan-thumb').forEach(b => b.addEventListener('click', () => openScan(b.dataset.src, b.dataset.cap)));
@@ -3920,8 +3951,9 @@
                     ov = document.createElement('div');
                     ov.id = 'scan-overlay';
                     ov.className = 'fixed inset-0 z-[90] hidden items-center justify-center bg-black/85 backdrop-blur-sm p-4 cursor-zoom-out';
-                    ov.innerHTML = '<div class="max-w-3xl max-h-full flex flex-col items-center gap-2"><img id="scan-img" class="max-h-[82vh] w-auto rounded-lg shadow-2xl" alt="scan"><p id="scan-cap" class="font-code text-[10px] uppercase tracking-widest text-gray-300"></p><p class="font-code text-[9px] text-gray-500">click anywhere to close</p></div>';
+                    ov.innerHTML = '<button class="scan-close" aria-label="Close reader">&times;</button><div class="max-w-3xl max-h-full flex flex-col items-center gap-2"><img id="scan-img" class="max-h-[82vh] w-auto rounded-lg shadow-2xl" alt="scan"><p id="scan-cap" class="font-code text-[10px] uppercase tracking-widest text-gray-300"></p></div>';
                     ov.addEventListener('click', () => { ov.classList.add('hidden'); ov.classList.remove('flex'); });
+                    ov.querySelector('.scan-close').addEventListener('click', e => { e.stopPropagation(); ov.classList.add('hidden'); ov.classList.remove('flex'); });
                     document.body.appendChild(ov);
                 }
                 $('scan-img').src = src;
