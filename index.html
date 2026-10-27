@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mastermind Simulations - Visualized Learning</title>
     <meta name="description" content="Mastermind Simulations is an offline-ready interactive learning suite covering projectile motion, circle geometry, computing, and the skeletal system.">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='white'/%3E%3Ctext x='32' y='45' font-family='Arial' font-size='38' font-weight='900' text-anchor='middle' fill='black'%3EM%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" href="assets/mastermind-scholars-logo.png">
     <!-- Locally compiled Tailwind CSS -->
     <link rel="stylesheet" href="tailwind.css">
     <!-- Local assets keep the complete classroom site available without internet -->
@@ -603,6 +603,7 @@
         #view-circle header{background:var(--navy);color:#fff;padding:16px 18px;display:flex;gap:12px;align-items:center}
         @media(prefers-color-scheme:dark){#view-circle header{background:#1b2760;color:#fff}}
         #view-circle .logo{width:44px;height:44px;border-radius:12px;background:#ffd43b;color:#14246b;display:grid;place-items:center;font:700 24px Georgia,serif}
+        #view-circle .logo img{width:100%;height:100%;object-fit:contain;border-radius:inherit}
         #view-circle header h1{margin:0;font-size:1.25rem;letter-spacing:.2px;font-weight:700}
         #view-circle header p{margin:0;font-size:.85rem;opacity:.85}
         #view-circle header .hub{margin-left:auto;align-self:center;color:#fff;opacity:.9;text-decoration:none;font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;font-weight:700;font-size:.85rem;border:1.5px solid rgba(255,255,255,.55);padding:8px 13px;border-radius:999px;white-space:nowrap}
@@ -683,12 +684,12 @@
     <!-- Global site header -->
     <header id="global-header" class="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-3">
         <a href="#hub" class="flex items-center gap-3 group no-underline">
-            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg shadow-white/10 group-hover:scale-105 transition-transform duration-300">
-                <span class="font-stencil text-xl text-black select-none tracking-tighter">M</span>
+            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow-lg shadow-white/10 group-hover:scale-105 transition-transform duration-300">
+                <img src="assets/mastermind-scholars-logo.png" alt="Mastermind Scholars World emblem" class="w-full h-full object-contain" fetchpriority="high">
             </div>
             <div class="flex flex-col">
-                <span class="font-code font-light tracking-wider text-base text-white group-hover:text-silver-300 transition-colors">MASTERMIND</span>
-                <span class="text-[9px] uppercase tracking-widest text-gray-400 font-mono -mt-0.5">Simulations</span>
+                <span class="font-code font-light tracking-wider text-base text-white group-hover:text-silver-300 transition-colors">MASTERMIND SCHOLARS</span>
+                <span class="text-[9px] uppercase tracking-widest text-gray-400 font-mono -mt-0.5">Simulations · World</span>
             </div>
         </a>
 
@@ -922,7 +923,7 @@
 
         <!-- ================= VIEW: CIRCLE SEGMENTS (Mastermind Scholars) ================= -->
         <section id="view-circle" class="hidden flex-1">
-            <header><div class="logo">M</div><div><h1>Mastermind Scholars</h1><p>Circle Segments Lab · Plane Geometry</p></div><a class="hub" href="#hub">← All labs</a></header>
+            <header><div class="logo"><img src="assets/mastermind-scholars-logo.png" alt="Mastermind Scholars World emblem"></div><div><h1>Mastermind Scholars</h1><p>Circle Segments Lab · Plane Geometry</p></div><a class="hub" href="#hub">← All labs</a></header>
             <div class="sch-main">
             <nav id="nav"><button data-m="parts" class="on">Parts of a circle</button><button data-m="lab">Segment lab</button><button data-m="prac">Practice</button></nav>
             <div class="cgrid">
