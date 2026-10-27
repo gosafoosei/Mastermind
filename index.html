@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mastermind Simulations - Visualized Learning</title>
     <meta name="description" content="Mastermind Simulations is an offline-ready interactive learning suite covering projectile motion, circle geometry, computing, and the skeletal system.">
-    <link rel="icon" type="image/png" href="assets/mastermind-scholars-logo.png">
+    <link rel="icon" type="image/png" href="assets/mastermind-scholars-logo-circle.png">
     <!-- Locally compiled Tailwind CSS -->
     <link rel="stylesheet" href="tailwind.css">
     <!-- Local assets keep the complete classroom site available without internet -->
@@ -121,9 +121,14 @@
         .navlink:hover { color: #ffffff; }
         .navlink.on { color: #ffffff; border-bottom-color: rgba(255, 255, 255, 0.7); }
 
+        #global-header .site-brand-mark { width: 2.5rem; height: 2.5rem; flex: 0 0 2.5rem; }
+        #global-header .site-brand-title { white-space: nowrap; letter-spacing: 0.04em; }
+        #global-header .site-brand-copy { min-width: 0; }
         @media (max-width: 640px) {
-            #global-header { flex-wrap: wrap; }
-            #global-header > div { width: 100%; min-width: 0; justify-content: space-between; gap: 0.5rem; }
+            #global-header { flex-wrap: wrap; row-gap: 0.75rem; }
+            #global-header > a { width: 100%; min-width: 0; }
+            #global-header > div { width: 100%; min-width: 0; justify-content: space-between; gap: 0.25rem; flex-wrap: wrap; row-gap: 0.5rem; }
+            #global-header .navlink { font-size: 9px; white-space: nowrap; }
         }
 
         /* Shared control styling */
@@ -602,7 +607,7 @@
         #view-circle h3{font-weight:700;font-size:1.05rem}
         #view-circle header{background:var(--navy);color:#fff;padding:16px 18px;display:flex;gap:12px;align-items:center}
         @media(prefers-color-scheme:dark){#view-circle header{background:#1b2760;color:#fff}}
-        #view-circle .logo{width:44px;height:44px;border-radius:12px;background:#ffd43b;color:#14246b;display:grid;place-items:center;font:700 24px Georgia,serif}
+        #view-circle .logo{width:44px;height:44px;border-radius:50%;background:#fff;color:#14246b;display:grid;place-items:center;overflow:hidden;font:700 24px Georgia,serif}
         #view-circle .logo img{width:100%;height:100%;object-fit:contain;border-radius:inherit}
         #view-circle header h1{margin:0;font-size:1.25rem;letter-spacing:.2px;font-weight:700}
         #view-circle header p{margin:0;font-size:.85rem;opacity:.85}
@@ -684,11 +689,11 @@
     <!-- Global site header -->
     <header id="global-header" class="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-3">
         <a href="#hub" class="flex items-center gap-3 group no-underline">
-            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow-lg shadow-white/10 group-hover:scale-105 transition-transform duration-300">
-                <img src="assets/mastermind-scholars-logo.png" alt="Mastermind Scholars World emblem" class="w-full h-full object-contain" fetchpriority="high">
+            <div class="site-brand-mark w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-lg shadow-white/10 group-hover:scale-105 transition-transform duration-300">
+                <img src="assets/mastermind-scholars-logo-circle.png" alt="Mastermind Scholars World emblem" class="w-full h-full object-contain" fetchpriority="high">
             </div>
-            <div class="flex flex-col">
-                <span class="font-code font-light tracking-wider text-base text-white group-hover:text-silver-300 transition-colors">MASTERMIND SCHOLARS</span>
+            <div class="site-brand-copy flex flex-col">
+                <span class="site-brand-title font-code font-light tracking-wider text-base text-white group-hover:text-silver-300 transition-colors">MASTERMIND SCHOLARS</span>
                 <span class="text-[9px] uppercase tracking-widest text-gray-400 font-mono -mt-0.5">Simulations · World</span>
             </div>
         </a>
@@ -923,7 +928,7 @@
 
         <!-- ================= VIEW: CIRCLE SEGMENTS (Mastermind Scholars) ================= -->
         <section id="view-circle" class="hidden flex-1">
-            <header><div class="logo"><img src="assets/mastermind-scholars-logo.png" alt="Mastermind Scholars World emblem"></div><div><h1>Mastermind Scholars</h1><p>Circle Segments Lab · Plane Geometry</p></div><a class="hub" href="#hub">← All labs</a></header>
+            <header><div class="logo"><img src="assets/mastermind-scholars-logo-circle.png" alt="Mastermind Scholars World emblem"></div><div><h1>Mastermind Scholars</h1><p>Circle Segments Lab · Plane Geometry</p></div><a class="hub" href="#hub">← All labs</a></header>
             <div class="sch-main">
             <nav id="nav"><button data-m="parts" class="on">Parts of a circle</button><button data-m="lab">Segment lab</button><button data-m="prac">Practice</button></nav>
             <div class="cgrid">
