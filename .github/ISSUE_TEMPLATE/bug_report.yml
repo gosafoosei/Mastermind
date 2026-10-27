@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a reproducible problem in a learning lab or the offline package.
+title: "[Bug]: "
+labels: ["bug", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Please do not include student personal information or private classroom data.
+  - type: input
+    id: area
+    attributes:
+      label: Lab or area
+      placeholder: Projectile Motion, Circle Segments, Data & Logic, Skeletal System, or offline setup
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the actions that reliably trigger the problem.
+      placeholder: 1. Open… 2. Select… 3. Observe…
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, device, and online/offline mode
+      placeholder: Edge on Windows 11, offline package
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshot or console details
+      description: Remove names and other personal information before attaching evidence.
+    validations:
+      required: false

@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest an improvement to a lesson, simulation, or classroom workflow.
+title: "[Feature]: "
+labels: ["enhancement", "needs triage"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Learning or classroom need
+      description: What should a student or teacher be able to do more effectively?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the feature or content you have in mind.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: How should we know it works?
+      description: Give observable outcomes or acceptance criteria.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Physics · Projectile Motion
+        - Mathematics · Circle Segments
+        - Computing · Data & Logic
+        - Biology · Skeletal System
+        - Offline use or accessibility
+        - Other
+    validations:
+      required: true
