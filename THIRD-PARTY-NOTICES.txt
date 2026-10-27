@@ -1,0 +1,6 @@
+﻿Third-party components included in this offline package:
+
+- Three.js r128 (three.min.js, OrbitControls.js, GLTFLoader.js): MIT License. Copyright (c) 2010-2021 three.js authors. License: https://github.com/mrdoob/three.js/blob/r128/LICENSE
+- Skeleton model: organui/skeleton-3d, MIT License; anatomical data from BodyParts3D, The Database Center for Life Science, CC BY-SA 2.1 JP. Attribution is also displayed in the Skeletal System lab. Source: https://github.com/organui/skeleton-3d
+- Font Awesome Free 6.4.0 CSS and webfonts: Icons CC BY 4.0, fonts SIL OFL 1.1, code MIT. License: https://fontawesome.com/license/free
+- Tailwind CSS 3.4.17 generated stylesheet: MIT License.

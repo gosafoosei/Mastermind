@@ -4,46 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mastermind Simulations - Visualized Learning</title>
-    <meta name="description" content="Mastermind Simulations — an interactive educational platform where STEM lessons become real-time simulations: projectile motion, circle geometry, and computing labs — all in one file.">
+    <meta name="description" content="Mastermind Simulations is an offline-ready interactive learning suite covering projectile motion, circle geometry, computing, and the skeletal system.">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='white'/%3E%3Ctext x='32' y='45' font-family='Arial' font-size='38' font-weight='900' text-anchor='middle' fill='black'%3EM%3C/text%3E%3C/svg%3E">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for coding aesthetics & stencil logo -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@200;300;400;500;600&family=Inter:wght@300;400;500;600;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Three.js for the 3D skeletal system lab -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        code: ['"Fira Code"', 'monospace'],
-                        stencil: ['"Saira Stencil One"', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        silver: {
-                            100: '#f3f4f6',
-                            300: '#d1d5db',
-                            500: '#9ca3af',
-                            700: '#4b5563',
-                            900: '#1f2937',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Locally compiled Tailwind CSS -->
+    <link rel="stylesheet" href="tailwind.css">
+    <!-- Local assets keep the complete classroom site available without internet -->
+    <link rel="stylesheet" href="vendor/fontawesome.css">
+    <script src="vendor/three.min.js"></script>
+    <script src="vendor/OrbitControls.js"></script>
+    <script src="vendor/GLTFLoader.js"></script>
 
     <style>
         html { scroll-behavior: smooth; }
+        body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+        .font-code { font-family: 'Fira Code', ui-monospace, SFMono-Regular, Consolas, monospace; }
+        .font-stencil { font-family: 'Saira Stencil One', Impact, sans-serif; }
 
         /* Custom background gradient with rich silver and obsidian depth */
         body {
@@ -145,6 +120,11 @@
 
         .navlink:hover { color: #ffffff; }
         .navlink.on { color: #ffffff; border-bottom-color: rgba(255, 255, 255, 0.7); }
+
+        @media (max-width: 640px) {
+            #global-header { flex-wrap: wrap; }
+            #global-header > div { width: 100%; min-width: 0; justify-content: space-between; gap: 0.5rem; }
+        }
 
         /* Shared control styling */
         .ctl-label {
@@ -701,7 +681,7 @@
     <canvas id="fx-canvas"></canvas>
 
     <!-- Global site header -->
-    <header class="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-3">
+    <header id="global-header" class="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-3">
         <a href="#hub" class="flex items-center gap-3 group no-underline">
             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg shadow-white/10 group-hover:scale-105 transition-transform duration-300">
                 <span class="font-stencil text-xl text-black select-none tracking-tighter">M</span>
@@ -762,6 +742,10 @@
                         <i class="fa-solid fa-compass text-gray-400"></i>
                         <span>EXPLORE MODULES</span>
                     </button>
+                    <a href="Mastermind-Simulations-Offline.zip" download class="glass-panel hover:bg-white/10 text-gray-300 hover:text-white px-6 py-4 rounded-xl font-code text-sm tracking-wider flex items-center gap-2 transition-all no-underline">
+                        <i class="fa-solid fa-download text-gray-400"></i>
+                        <span>DOWNLOAD OFFLINE SITE</span>
+                    </a>
                 </div>
 
                 <p class="font-code text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-4 text-center">The labs · pick a subject</p>
@@ -1191,8 +1175,11 @@
                             <div class="flex flex-wrap items-center gap-2 mt-3">
                                 <button id="sk-btn-reset" class="chip-toggle"><i class="fa-solid fa-rotate-left"></i>Reset view</button>
                                 <button id="sk-btn-rotate" class="chip-toggle"><i class="fa-solid fa-arrows-rotate"></i>Auto-rotate</button>
-                                <button id="sk-btn-labels" class="chip-toggle"><i class="fa-solid fa-tags"></i>Labels</button>
-                                <span class="ctl-label ml-auto hidden sm:block">drag rotate · scroll zoom · click a bone</span>
+                                <div id="sk-label-detail" class="seg-group" role="group" aria-label="Label detail level">
+                                    <button id="sk-label-simple" type="button" class="on" aria-pressed="true">Simple</button>
+                                    <button id="sk-label-detailed" type="button" aria-pressed="false">Detailed</button>
+                                </div>
+                                <span class="ctl-label ml-auto">hover to label · click to highlight</span>
                             </div>
                             <p class="text-[9px] text-gray-600 font-light mt-2 leading-relaxed">Anatomical data: BodyParts3D © The Database Center for Life Science, CC BY-SA 2.1 JP · web adaptation: organui/skeleton-3d (MIT)</p>
                         </div>
@@ -1293,7 +1280,7 @@
                                     <i class="fa-solid fa-pen-ruler text-emerald-400"></i>
                                     <h2 class="font-code text-sm text-white font-medium">Theory questions — with model answers</h2>
                                 </div>
-                                <p class="text-[11px] text-gray-400 font-light leading-relaxed">The full theory paper from the Mastermind Notes (Parts 1 &amp; 2) — 14 questions, 243 marks, every sub-part with its mark allocation. Write your answer first, then open the model answer and mark yourself honestly.</p>
+                                <p class="text-[11px] text-gray-400 font-light leading-relaxed">The full theory paper from the Mastermind Notes (Parts 1 &amp; 2) — 14 questions, 263 marks, every sub-part with its mark allocation. Write your answer first, then open the model answer and mark yourself honestly.</p>
                                 <div class="seg-group mt-3" id="theory-filter">
                                     <button data-f="all" class="on">ALL</button>
                                     <button data-f="1">PART 1</button>
@@ -2105,7 +2092,14 @@
             $('btn-launch').addEventListener('click', launch);
             $('btn-clear').addEventListener('click', () => {
                 state.shots = [];
+                state.flight = null;
+                state.phase = 'idle';
+                state.simT = 0;
+                state.trail = [];
+                $('btn-launch').disabled = false;
                 $('result-box').classList.add('hidden');
+                updateTelemetry();
+                render();
             });
             $('btn-target').addEventListener('click', newTarget);
 
@@ -3128,7 +3122,7 @@
 
             const TONE = { skull: 0xe2d3b6, spine: 0xdcc59d, ribs: 0xe6d8bd, sternum: 0xe6d8bd, clavicle: 0xe0cdaa, scapula: 0xe0cdaa, humerus: 0xe0cdaa, forearm: 0xe0cdaa, hand: 0xe0cdaa, pelvis: 0xd8c19a, femur: 0xe3d1b0, patella: 0xe3d1b0, shin: 0xe3d1b0, foot: 0xe3d1b0 };
             const CART = { spine: 0xa9c3cb, ribs: 0xa9c3cb };
-            const GLB_URL = 'https://cdn.jsdelivr.net/gh/organui/skeleton-3d@main/public/models/skeleton.glb';
+            const GLB_URL = 'files/models/skeleton.glb';
 
             // map a GLB mesh name (anatomical slug, e.g. "left-parietal-bone") to an info group
             function keyFor(name) {
@@ -3192,8 +3186,8 @@
             }
 
             /* ---------- one label for every bone, with screen-space de-cluttering ---------- */
-            let labelsOn = false;
-            const BONES = [];          // {name, key, mesh, center, radius, sp}
+            let labelDetail = 'simple';
+            const BONES = [];          // {name, key, mesh, center, radius}
             let labelOrder = [];
             let viewW = 0, viewH = 0, lastW = 0, lastH = 0;
 
@@ -3229,82 +3223,8 @@
                 return s;
             }
 
-            function makeLabel(text) {
-                const meas = document.createElement('canvas').getContext('2d');
-                let font = 20;
-                meas.font = '600 ' + font + 'px "Fira Code", monospace';
-                let tw = meas.measureText(text).width;
-                if (tw > 330) { font = 15; tw = meas.measureText(text).width; }
-                const c = document.createElement('canvas');
-                c.width = Math.min(360, Math.ceil(tw) + 26); c.height = 38;
-                const x = c.getContext('2d');
-                x.fillStyle = 'rgba(8,12,20,0.92)'; x.fillRect(0, 0, c.width, c.height);
-                x.strokeStyle = 'rgba(255,255,255,0.45)'; x.lineWidth = 2; x.strokeRect(1, 1, c.width - 2, c.height - 2);
-                x.fillStyle = '#e5e7eb'; x.font = '600 ' + font + 'px "Fira Code", monospace';
-                x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, c.width / 2, c.height / 2 + 1);
-                const tex = new THREE.CanvasTexture(c); tex.minFilter = THREE.LinearFilter;
-                const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
-                const worldH = 0.034;
-                sp.scale.set(worldH * c.width / c.height, worldH, 1);
-                sp.userData.cw = c.width; sp.userData.ch = c.height;
-                return sp;
-            }
-
-            function buildBoneLabels() {
-                BONES.forEach(b => {
-                    const sp = makeLabel(shortLabel(b.name));
-                    sp.position.copy(b.center);
-                    sp.visible = false;
-                    scene.add(sp);
-                    b.sp = sp;
-                });
-            }
-
-            // greedy de-clutter: large bones claim screen space first; overlapping labels yield
-            // pool: manual all-labels mode, or the focused region's bones when zoomed in
-            const projV = new THREE.Vector3();
-            function updateLabels() {
-                if (!BONES.length || !viewW) return;
-                const w = viewW, h = viewH;
-                const halfTan = Math.tan(camera.fov * Math.PI / 360);
-                let pool;
-                if (labelsOn) pool = labelOrder;
-                else if (labelRegion) pool = labelOrder.filter(b => b.key === labelRegion);
-                else pool = [];
-                if (selectedBoneName) {
-                    const fb = BONES.find(b => b.name === selectedBoneName);
-                    if (fb) { pool = pool.filter(b => b !== fb); pool.unshift(fb); } // always show the selected bone's label
-                }
-                const rects = [];
-                for (let i = 0; i < pool.length; i++) {
-                    const b = pool[i];
-                    projV.copy(b.center).project(camera);
-                    let vis = false;
-                    if (projV.z < 1) {
-                        const sx = (projV.x * 0.5 + 0.5) * w;
-                        const sy = (-projV.y * 0.5 + 0.5) * h;
-                        const dist = camera.position.distanceTo(b.center);
-                        const pxH = (0.034 / (2 * halfTan * dist)) * h;
-                        const pxW = pxH * (b.sp.userData.cw / b.sp.userData.ch);
-                        const rw = Math.max(34, pxW), rh = Math.max(10, pxH);
-                        let ok = sx > -rw / 2 && sx < w + rw / 2 && sy > -rh / 2 && sy < h + rh / 2;
-                        if (ok) {
-                            for (let j = 0; j < rects.length; j++) {
-                                const r = rects[j];
-                                if (Math.abs(sx - r.x) < (rw + r.w) / 2 + 2 && Math.abs(sy - r.y) < (rh + r.h) / 2 + 2) { ok = false; break; }
-                            }
-                        }
-                        if (ok) { rects.push({ x: sx, y: sy, w: rw, h: rh }); vis = true; }
-                    }
-                    if (b.sp.visible !== vis) { b.sp.visible = vis; needsRender = true; }
-                }
-                // hide every label outside the active pool
-                const inPool = new Set(pool);
-                for (let i = 0; i < BONES.length; i++) {
-                    const b = BONES[i];
-                    if (!inPool.has(b) && b.sp.visible) { b.sp.visible = false; needsRender = true; }
-                }
-            }
+            // The active label is a readable screen-space tooltip on the hovered bone.
+            let hoveredBone = null;
 
             /* ---------- full anatomical index ---------- */
             function buildIndex() {
@@ -3345,7 +3265,6 @@
             function finishSetup() {
                 computeCenters();
                 buildBones();
-                buildBoneLabels();
                 buildIndex();
                 select(selected || 'overview');
                 $('sk-progress').style.display = 'none';
@@ -3464,8 +3383,14 @@
             let needsRender = true;
             let prevTs = 0;
             let selectedBoneName = null;   // individual bone level, if any
-            let labelRegion = null;        // region whose bones auto-label
             let camAnim = null;            // {toPos, toTgt, until} staged camera move
+            controls.addEventListener('change', () => { needsRender = true; });
+
+            function cancelCameraAnimation() {
+                camAnim = null;
+                focusUntil = 0;
+                focusDest.copy(controls.target);
+            }
 
             // move the camera to frame a bounding box, keeping the current viewing angle
             function frameBox(box, pad = 1.35) {
@@ -3507,7 +3432,6 @@
             function select(key, boneName, focusMesh, skipCam) {
                 selected = key;
                 selectedBoneName = boneName || null;
-                labelRegion = key === 'overview' ? null : key;
                 setInfo(key, boneName);
                 setListActive(key === 'overview' ? null : key);
                 // per-mesh lighting: one bone can glow alone; a group lights together
@@ -3518,7 +3442,8 @@
                     if (!mat) return;
                     mat.transparent = dim;
                     mat.opacity = dim ? 0.15 : 1;
-                    mat.emissive.setHex(dim ? 0x000000 : (isTarget ? 0x3a4a7a : 0x2c3a5e));
+                    mat.emissive.setHex(dim ? 0x000000 : (isTarget ? 0x18b8ff : 0x2c3a5e));
+                    mat.emissiveIntensity = isTarget ? 0.9 : 0.35;
                 });
                 // staged camera: overview ⇢ whole body · region ⇢ zoom to region · bone ⇢ zoom to bone
                 if (!skipCam) {
@@ -3548,33 +3473,52 @@
                 const hits = ray.intersectObjects(pickables, false);
                 return hits.length ? hits[0].object : null;
             }
-            canvas.addEventListener('pointerdown', e => { downX = e.clientX; downY = e.clientY; camAnim = null; });
-            canvas.addEventListener('wheel', () => { camAnim = null; }, { passive: true });
+            canvas.addEventListener('pointerdown', e => {
+                downX = e.clientX;
+                downY = e.clientY;
+                cancelCameraAnimation();
+                needsRender = true;
+                if (controls.autoRotate) {
+                    controls.autoRotate = false;
+                    $('sk-btn-rotate').classList.remove('on');
+                }
+            });
+            canvas.addEventListener('wheel', () => {
+                cancelCameraAnimation();
+                needsRender = true;
+            }, { passive: true });
             canvas.addEventListener('pointerup', e => {
                 if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) return;
                 const obj = pickAt(e);
                 if (!obj) { select('overview', null, null); return; }
-                if (selected === 'overview') select(obj.userData.key);   // stage 1: zoom into the bone's region
-                else select(obj.userData.key, obj.name, obj);            // stage 2: drill into the individual bone
+                hoveredBone = obj;
+                select(obj.userData.key, obj.name, obj);
                 // during an identification question, the highlighted bone stays highlighted
                 if (exam.active && exam.qs[exam.i] && exam.qs[exam.i].hl) applyExamHighlight();
             });
             const tip = $('sk-tooltip');
             canvas.addEventListener('pointermove', e => {
+                needsRender = true;
                 const obj = pickAt(e);
+                if (obj !== hoveredBone) {
+                    hoveredBone = obj;
+                }
                 if (obj) {
                     const r = wrap.getBoundingClientRect();
                     tip.style.display = 'block';
                     tip.style.left = (e.clientX - r.left) + 'px';
                     tip.style.top = (e.clientY - r.top) + 'px';
-                    tip.textContent = human(obj.name);
+                    tip.textContent = labelDetail === 'simple' ? shortLabel(obj.name) : human(obj.name);
                     canvas.style.cursor = 'pointer';
                 } else {
                     tip.style.display = 'none';
                     canvas.style.cursor = 'grab';
                 }
             });
-            canvas.addEventListener('pointerleave', () => { tip.style.display = 'none'; });
+            canvas.addEventListener('pointerleave', () => {
+                tip.style.display = 'none';
+                hoveredBone = null;
+            });
 
             /* ---------- toolbar ---------- */
             $('sk-btn-reset').addEventListener('click', () => select('overview', null, null));
@@ -3587,12 +3531,22 @@
                 controls.autoRotate = !controls.autoRotate;
                 this.classList.toggle('on', controls.autoRotate);
             });
-            $('sk-btn-labels').addEventListener('click', function () {
-                labelsOn = !labelsOn;
-                this.classList.toggle('on', labelsOn);
+            const simpleLabelsBtn = $('sk-label-simple');
+            const detailedLabelsBtn = $('sk-label-detailed');
+            function setLabelDetail(detail) {
+                labelDetail = detail;
+                const simple = detail === 'simple';
+                simpleLabelsBtn.classList.toggle('on', simple);
+                simpleLabelsBtn.setAttribute('aria-pressed', String(simple));
+                detailedLabelsBtn.classList.toggle('on', !simple);
+                detailedLabelsBtn.setAttribute('aria-pressed', String(!simple));
+                if (hoveredBone && tip.style.display !== 'none') {
+                    tip.textContent = detail === 'simple' ? shortLabel(hoveredBone.name) : human(hoveredBone.name);
+                }
                 needsRender = true;
-                if (labelsOn) updateLabels();
-            });
+            }
+            simpleLabelsBtn.addEventListener('click', () => setLabelDetail('simple'));
+            detailedLabelsBtn.addEventListener('click', () => setLabelDetail('detailed'));
             $('sk-btn-quiz').addEventListener('click', newQuiz);
 
             /* ---------- sizing + loop ---------- */
@@ -3842,7 +3796,7 @@
             const THEORY_Q = [
                 { p: 1, n: 1, q: [{ l: "a", t: "Distinguish between an exoskeleton, an endoskeleton and a hydrostatic skeleton, giving one example of an organism with each.", m: 6 }, { l: "b", t: "State two advantages and two disadvantages of a hydrostatic skeleton.", m: 4 }, { l: "c", t: "State four differences between an endoskeleton and an exoskeleton.", m: 4 }, { l: "d", t: "Explain why the bones of old people fracture more easily than those of children.", m: 3 }], ans: {"a": "Exoskeleton: hard, non -living skeleton outside the body, e.g. grasshopper (chitin). Endoskeleton: living skeleton inside the body made of bone and cartilage, e.g. man, rabbit. Hydrostatic skeleton: body-wall muscles contract against fluid under pressure in a coelom, e.g. earthworm.", "b": "Advantages (any two): allows easy movement by burrowing/swimming; flexible shape lets animal squeeze into narrow places to escape; repairs easily as fluid is refilled; cushions internal organs. Disadvantages (any two): limited attachment for organs; restricted to aquatic/moist habitats; lacks strength on land.", "c": "Any four rows from the table in Section 2.4 (inside/outside; living/non -living; grows/must be shed; muscles attached outside/inside; allows large/limits size).", "d": "Children’s skeletons contain more flexible cartilage and bone rich in collagen. With age, ossification increases mineral content, making bone hard but brittle; in old age bone also loses minerals (osteoclast activity exceeds osteoblast activity), so bones become weak and fracture easily."} },
                 { p: 1, n: 2, q: [{ l: "a", t: "Make a large, well-labelled diagram of the Haversian system of bone.", m: 8 }, { l: "b", t: "Name the three types of bone cells and state the function of each.", m: 6 }, { l: "c", t: "State four differences and two similarities between bone and cartilage.", m: 6 }], ans: {"a": "Diagram as Fig. 2. Marks: title (1); Haversian canal (1); lamellae (1); lacunae (1); osteocytes (1); canaliculi (1); accuracy/neatness of concentric rings (2).", "b": "Osteoblasts — secrete bone matrix (form new bone). Osteocytes — mature bone cells enclosed in lacunae; maintain the matrix. Osteoclasts — break down/resorb old bone and release minerals to the blood.", "c": "Differences (any four): bone hard/cartilage flexible; bone has blood vessels and nerves/cartilage avascular; bone matrix organic + in organic/cartilage purely organic; bone has calcium deposits/cartilage none; bone porous/cartilage non-porous; bone has Haversian systems/cartilage none. Similarities (any two): both connective tissues; both have living cells in a matrix; both contain collagen; cells in lacunae in both; both give support."} },
-                { p: 1, n: 3, q: [{ l: "a", t: "Name the five regi ons of the mammalian vertebral column and state the number of vertebrae in each region in humans.", m: 5 }, { l: "b", t: "Describe the features of a typical (generalised) vertebra and state the function of each feature.", m: 6 }, { l: "c", t: "Explain how the atlas and axis are adapted to their functions.", m: 6 }, { l: "d", t: "State three differences between the atlas and the axis.", m: 3 }], ans: {"a": "Cervical — 7; thoracic — 12; lumbar — 5; sacral — 5 (fused); caudal/coccygeal — 4 (fused). Total 33.", "b": "Centrum — bears weight, withstands compression; neural arch — protects spinal cord; neural canal — carries spinal cord; neural spine — muscle attachment; transverse processes — muscle attachment; pre - and postzygapophyses — articulate with neighbouring vertebrae.", "c": "Atlas: large concave anterior facets receive the occipital condyles, forming a hinge joint for nodding; wide flat transverse processes give large surface for neck muscles that move the head; large neural canal receives the odontoid process. Axis: odontoid process projects into the atlas, forming a pivot for rotation of the hea d; large neural spine anchors muscles that turn the head; flat articular surfaces allow the atlas to turn smoothly.", "d": "Any three rows of the atlas/axis table (odontoid absent/present; prezygapophyses present/absent; large/small transverse processes; reduc ed/large neural spine; nodding/rotation)."} },
+                { p: 1, n: 3, q: [{ l: "a", t: "Name the five regions of the mammalian vertebral column and state the number of vertebrae in each region in humans.", m: 5 }, { l: "b", t: "Describe the features of a typical (generalised) vertebra and state the function of each feature.", m: 6 }, { l: "c", t: "Explain how the atlas and axis are adapted to their functions.", m: 6 }, { l: "d", t: "State three differences between the atlas and the axis.", m: 3 }], ans: {"a": "Cervical — 7; thoracic — 12; lumbar — 5; sacral — 5 (fused); caudal/coccygeal — 4 (fused). Total 33.", "b": "Centrum — bears weight, withstands compression; neural arch — protects spinal cord; neural canal — carries spinal cord; neural spine — muscle attachment; transverse processes — muscle attachment; pre- and postzygapophyses — articulate with neighbouring vertebrae.", "c": "Atlas: large concave anterior facets receive the occipital condyles, forming a hinge joint for nodding; wide flat transverse processes give large surface for neck muscles that move the head; large neural canal receives the odontoid process. Axis: odontoid process projects into the atlas, forming a pivot for rotation of the head; large neural spine anchors muscles that turn the head; flat articular surfaces allow the atlas to turn smoothly.", "d": "Any three rows of the atlas/axis table (odontoid absent/present; prezygapophyses present/absent; large/small transverse processes; reduced/large neural spine; nodding/rotation)."} },
                 { p: 1, n: 4, q: [{ l: "a", t: "Make a well-labelled diagram of the lateral view of the lumbar vertebra.", m: 8 }, { l: "b", t: "State four features of the lumbar vertebra which fit it for its function.", m: 4 }, { l: "c", t: "State four differences between a thoracic vertebra and a lumbar vertebra.", m: 4 }, { l: "d", t: "Distinguish between true ribs, false ribs and floating ribs.", m: 3 }], ans: {"a": "Diagram as Fig. 12 (lateral view). Marks: title (1); neural spine (1); metapophysis (1); anapophysis (1); pre - and postzygapophyses (1); centrum (1); transverse process (1); hypapophysis (1).", "b": "Large, thick centrum to support weight of upper body; long transverse processes for attachment of abdominal and back muscles; metapophyses and anapophyses give extra muscle attachment and interlock under stress; large neural arch and zygapophyses allow bending and twisting.", "c": "Thoracic: long backward-pointing neural spine / Lumbar: short forward-pointing spine; Thoracic: short transverse processes / Lumbar: long, forward-pointing transverse processes; Thoracic: facets for ribs / Lumbar: no rib facets; Thoracic: no metapophyses or anapophyses / Lumbar: present; Thoracic: smaller centrum / Lumbar: largest centrum.", "d": "True ribs (7 pairs) attach directly to the sternum by their own costal cartilage; false ribs (3 pairs) attach indirectly through the cartilage o f the rib above; floating ribs (2 pairs) are not attached to the sternum."} },
                 { p: 1, n: 5, q: [{ l: "a", t: "Make a labelled drawing of the anterior view of the humerus of a rabbit.", m: 7 }, { l: "b", t: "State the function of each of the following: (i) olecranon process; (ii) coronoid process; (iii) sigmoid notch; (iv) supratrochlear foramen.", m: 4 }, { l: "c", t: "State five similarities between the fore limb and hind limb of a mammal.", m: 5 }, { l: "d", t: "State three differences between the pectoral and pelvic girdles.", m: 3 }], ans: {"a": "Diagram as Fig. 16. Marks: title (1); head (1); bicipital groove (1); deltoid ridge (1); shaft (1); coronoid fossa / supratrochlear foramen (1); trochlea (1).", "b": "(i) Olecranon process — locks into the olecranon fossa and prevents the arm bending backwards; provides attachment for the triceps. (ii) Coronoid process — fits into the coronoid fossa when the arm is flexed. (iii) Sigmoid notch — articulates with the trochlea of the humerus at the elbow. (iv) Supratrochlear foramen — passage of nerve, artery and vein.", "c": "Both are pentadactyl; both have three parts; one bone in the upper part (humerus/femur); two bones in the middle part (radius-ulna/tibia-fibula), one larger than the other; both have small bones at wrist/ankle, five metacarpals/metatarsals and phalanges; first digit has 2 phalanges; both end in nails/claws/hooves; both articulate with a girdle through a ball-and- socket joint.", "d": "Any three rows from the gird les table (fore/hind limbs; scapula + clavicle/ilium + ischium + pubis; not fused/fused to sacrum; glenoid cavity/acetabulum; obturator foramen absent/present)."} },
                 { p: 1, n: 6, q: [{ l: "a", t: "Name the four types of freely movable joints and give one example of each.", m: 8 }, { l: "b", t: "Describe the structure of a synovial joint.", m: 4 }, { l: "c", t: "Explain how the biceps and triceps muscles bring about the bending and straightening of the arm.", m: 5 }, { l: "d", t: "State three differences between tendons and ligaments.", m: 3 }], ans: {"a": "Ball and socket — shoulder or hip; hinge — elbow or knee; pivot — atlas and ax is; gliding — wrist, ankle, or between zygapophyses.", "b": "Ends of bones covered by articular (hyaline) cartilage to reduce friction; joint enclosed by a capsule with ligaments that hold the bones together; the capsule is lined by a synovial membrane which s ecretes synovial fluid; synovial fluid fills the cavity and lubricates the joint.", "c": "Muscles work in antagonistic pairs and can only pull. To bend the arm, the biceps (flexor) contracts, pulling on the radius, while the triceps relaxes; the forearm rises about the elbow (fulcrum). To straighten, the triceps (extensor) contracts, pulling on the olecranon process of the ulna, while the biceps relaxes. Nerve impulses coordinate the contractions.", "d": "Tendon joins muscle to bone / ligament joins bone to bone; t endon inelastic / ligament elastic; tendon of white collagen fibres / ligament of yellow elastic fibres."} },
@@ -3862,7 +3816,7 @@
                 return bank.filter === 'all' ? all : all.filter(x => bank.filter === 'd' ? !!x.q.d : x.q.p === +bank.filter);
             }
             function bankStats() {
-                const inScope = bank.filter === 'all' ? MSEC_Q : MSEC_Q.filter(x => bank.filter === 'd' ? !!x.d : x.p === bank.filter);
+                const inScope = bank.filter === 'all' ? MSEC_Q : MSEC_Q.filter(x => bank.filter === 'd' ? !!x.d : x.p === +bank.filter);
                 const answered = inScope.filter(x => x.chosen !== undefined);
                 const correct = inScope.filter(x => x.ok);
                 return `${bank.i + 1}/${inScope.length} · ${answered.length} answered · ${correct.length} correct`;
@@ -4010,7 +3964,6 @@
                     if (camera.position.distanceTo(camAnim.toPos) < 0.01 && controls.target.distanceTo(camAnim.toTgt) < 0.01) camAnim = null;
                 } else if (performance.now() < focusUntil) controls.target.lerp(focusDest, ease);
                 controls.update();
-                if (labelsOn || labelRegion) updateLabels();
                 renderer.render(scene, camera);
                 prevPos.copy(camera.position);
                 prevTgt.copy(controls.target);
