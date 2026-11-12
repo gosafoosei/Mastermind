@@ -164,19 +164,9 @@
         </button>
       </div>
 
-      <div class="mt-3 space-y-2 text-sm" id="reset-section">
-        <label class="ctl-label" for="reset-email">Email</label>
-        <input id="reset-email" type="email" placeholder="you@example.com" autocomplete="email" class="field-wrapper" />
-        <button id="send-reset" class="shiny-btn w-full py-1.5 text-xs" type="button">
-          <span class="pl-1">Send reset link</span>
-          <span class="spinner absolute right-3 top-1/2 -translate-y-1/2 hidden" id="reset-spinner"></span>
-        </button>
-        <p id="reset-error" class="text-xs text-red-400 min-h-[1.2em]" role="alert"></p>
-        <p class="text-gray-500 text-xs mt-2 text-center">
-          <a href="#" id="reset-cancel">Cancel</a>
-          <span id="reset-success" class="text-emerald-400 text-xs"></span>
-        </p>
-      </div>
+      <p class="text-gray-500 text-xs mt-4 text-center">
+        <a href="#" id="forgot-link">Forgot password?</a>
+      </p>
 
       <p class="text-gray-500 text-xs mt-3 text-center">
         <a href="index.html" class="navlink">← Back to hub</a>
@@ -209,63 +199,9 @@
       var tabSignin = document.getElementById("tab-signin");
       var tabSignup = document.getElementById("tab-signup");
       var togglePassword = document.getElementById("toggle-password");
-      // --- Forgot password / reset email ---
-      var resetSection = document.getElementById("reset-section");
-      var resetEmail = document.getElementById("reset-email");
-      var sendResetBtn = document.getElementById("send-reset");
-      var resetSpinner = document.getElementById("reset-spinner");
-      var resetError = document.getElementById("reset-error");
-      var resetCancel = document.getElementById("reset-cancel");
-      var resetSuccess = document.getElementById("reset-success");
+      var forgotLink = document.getElementById("forgot-link");
 
-      function setResetLoading(loading) {
-        sendResetBtn.disabled = loading;
-        resetSpinner.classList.toggle("hidden", !loading);
-        sendResetBtn.innerHTML = loading
-          ? '<span class="pl-1">Sending…</span>'
-          : '<span class="pl-1">Send reset link</span>';
-      }
-
-      function showResetError(msg) { resetError.textContent = msg || ""; }
-      function clearResetError() { resetError.textContent = ""; }
-
-      resetCancel.addEventListener("click", function () {
-        resetSection.style.display = "none";
-        resetSuccess.textContent = "";
-        clearResetError();
-      });
-
-      resetEmail.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") sendResetBtn.click();
-      });
-
-      sendResetBtn.addEventListener("click", function () {
-        var email = resetEmail.value.trim();
-        if (!email) {
-          showResetError("Please enter your email address.");
-          return;
-        }
-        clearResetError();
-        setResetLoading(true);
-        supabase.auth.resetPasswordForEmail(email)
-          .then(function (res) {
-            var error = res.error;
-            if (error) {
-              showResetError(error.message || "Failed to send reset link.");
-              setResetLoading(false);
-              return;
-            }
-            resetSuccess.textContent = "If that account exists, a reset link was sent to your inbox.";
-            clearResetError();
-            setResetLoading(false);
-            resetEmail.value = "";
-            setTimeout(function () { resetSection.style.display = "none"; }, 6000);
-          })
-          .catch(function (err) {
-            showResetError(err.message || "Failed to send reset link.");
-            setResetLoading(false);
-          });
-      });
+      var SPINNER_DELAY = 400;
 
       function showError(msg) {
         errorEl.textContent = msg || "";
