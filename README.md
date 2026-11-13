@@ -17,6 +17,7 @@ An offline-ready set of interactive learning labs for physics, mathematics, comp
 
 - **Projectile Motion:** change the launch speed, angle, height, and gravity; explore the predicted path and measurements.
 - **Circle Segments:** learn circle parts, use the segment-area lab, and practise with interactive questions.
+- **Geometry:** explore the sector-to-cone transformation, use the interactive sector-to-cone lab, and practise with measurements.
 - **Data & Logic:** operate stacks and queues, trace linear and binary searches, and explore logic gates.
 - **Skeletal System:** explore the 3D skeleton, bone labels, study cards, question banks, past papers, and the exam.
 
