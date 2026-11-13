@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastermind · Sign In / Sign Up</title>
+    <meta name="description" content="Sign in or create an account to access the Mastermind interactive learning labs.">
+    <link rel="icon" type="image/png" href="assets/mastermind-scholars-logo-circle.png">
+    <link rel="stylesheet" href="tailwind.css">
+    <link rel="stylesheet" href="vendor/fontawesome.css">
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+        .font-code { font-family: 'Fira Code', ui-monospace, SFMono-Regular, Consolas, monospace; }
+        .font-stencil { font-family: 'Saira Stencil One', Impact, sans-serif; }
+
+        /* Custom background gradient with rich silver and obsidian depth */
+        body.auth-page {
+            background: radial-gradient(circle at 50% 20%, #1e2430 0%, #0d1117 60%, #05070a 100%);
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+
+        #fx-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .shiny-btn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #d1d5db 50%, #9ca3af 100%);
+            color: #05070a;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .shiny-btn:hover:not(:disabled) {
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+        }
+
+        .shiny-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-ghost {
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            color: #d1d5db;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-ghost:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-solid {
+            background: rgba(255, 255, 255, 0.92);
+            color: #05070a;
+            transition: all 0.2s ease;
+        }
+
+        .btn-solid:hover:not(:disabled) {
+            background: #ffffff;
+            box-shadow: 0 0 24px rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-solid:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .navlink {
+            color: #9ca3af;
+            transition: color 0.2s ease;
+            text-decoration: none;
+            padding-bottom: 2px;
+            border-bottom: 1px solid transparent;
+        }
+
+        .navlink:hover { color: #ffffff; }
+        .navlink.on { color: #ffffff; border-bottom-color: rgba(255, 255, 255, 0.7); }
+
+        #global-header .site-brand-mark { width: 2.5rem; height: 2.5rem; flex: 0 0 2.5rem; }
+        #global-header .site-brand-title { white-space: nowrap; letter-spacing: 0.04em; }
+        #global-header .site-brand-copy { min-width: 0; }
+
+        @media (max-width: 640px) {
+            #global-header { flex-wrap: wrap; row-gap: 0.75rem; }
+            #global-header > a { width: 100%; min-width: 0; }
+            #global-header > div { width: 100%; min-width: 0; justify-content: space-between; gap: 0.25rem; flex-wrap: wrap; row-gap: 0.5rem; }
+            #global-header .navlink { font-size: 9px; white-space: nowrap; }
+        }
+
+        .ctl-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #9ca3af;
+        }
+
+        .ctl-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            color: #f3f4f6;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.05rem 0.45rem;
+        }
+
+        input[type="range"] {
+            accent-color: #ffffff;
+            width: 100%;
+        }
+
+        .num-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #f3f4f6;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            padding: 0.5rem 0.7rem;
+        }
+
+        .num-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .seg-group {
+            display: inline-flex;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .seg-group button {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.64rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.35rem 0.8rem;
+            color: #9ca3af;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .seg-group button.on {
+            background: rgba(255, 255, 255, 0.92);
+            color: #05070a;
+        }
+
+        #auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        #auth-card {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        #auth-card h1 {
+            font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        #auth-card .subtitle {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.95rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 1.75rem;
+        }
+
+        .auth-tabs button {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: #9ca3af;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .auth-tabs button.on {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .auth-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .auth-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #e5e7eb;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: #6b7280;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.2s ease;
+        }
+
+        .password-wrapper .toggle-password:hover {
+            color: #e5e7eb;
+        }
+
+        .auth-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .auth-actions .btn {
+            padding: 0.85rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-signup:hover {
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-signin {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e5e7eb;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-signin:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+
+        .password-requirements {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .password-requirements.active {
+            display: block;
+        }
+
+        .password-requirements ul {
+            margin: 0.5rem 0 0 0;
+            padding-left: 1rem;
+            color: #9ca3af;
+        }
+
+        .password-requirements li {
+            margin-bottom: 0.2rem;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        .auth-footer a {
+            color: #3b82f6;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: none;
+            margin-bottom: 1rem;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            color: #86efac;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: none;
+            margin-bottom: 1rem;
+        }
+
+        .success-message.visible {
+            display: block;
+        }
+
+        .toggle-password {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-password:hover {
+            color: #e5e7eb;
+        }
+
+        @media (max-width: 640px) {
+            #auth-card {
+                padding: 1.75rem;
+                margin: 1rem;
+            }
+
+            #auth-container {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body class="auth-page">
+    <canvas id="fx-canvas"></canvas>
+
+    <div id="auth-container">
+        <div id="auth-card">
+            <div class="flex items-center justify-center space-x-2 mb-2">
+                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                    <i class="fa-solid fa-graduation-cap text-white text-lg"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-code font-bold">Mastermind</h1>
+            <p class="subtitle">Access the interactive learning suite</p>
+
+            <div class="auth-tabs">
+                <button class="on" data-tab="signin"><i class="icon fa-solid fa-sign-in"></i>Sign In</button>
+                <button data-tab="signup"><i class="icon fa-solid fa-user-plus"></i>Create Account</button>
+            </div>
+
+            <div id="panel-signin" class="auth-panel active">
+                <div id="error-message" class="error-message"></div>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('login-password', 'login-toggle-icon')">
+                            <i class="fa-solid fa-eye" id="login-toggle-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="auth-actions">
+                    <button class="btn btn-signin" onclick="signIn()">Sign In</button>
+                    <button class="btn btn-signup" onclick="switchToTab('signup')">Create Account</button>
+                </div>
+                <div class="auth-footer">
+                    <a onclick="resetPassword()">Forgot your password?</a>
+                </div>
+            </div>
+
+            <div id="panel-signup" class="auth-panel">
+                <div id="success-message" class="success-message"></div>
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="John Doe" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="signup-password" placeholder="Create a password (min 6 chars)" autocomplete="new-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('signup-password', 'signup-toggle-icon')">
+                            <i class="fa-solid fa-eye" id="signup-toggle-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="password-requirements active">
+                    <ul>
+                        <li>At least 6 characters</li>
+                    </ul>
+                </div>
+                <div class="auth-actions">
+                    <button class="btn btn-signup" onclick="signUp()">Create Account</button>
+                    <button class="btn btn-signin" onclick="switchToTab('signin')">Sign In</button>
+                </div>
+            </div>
+
+            <div class="auth-footer">
+                <p>Powered by Supabase &middot; <a onclick="togglePassword('login-password', 'login-toggle-icon'); togglePassword('signup-password', 'signup-toggle-icon')" style="cursor:pointer">Show password</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase configuration - REPLACE WITH YOUR PROJECT DETAILS
+        const supabaseUrl = 'https://jtxhwevdqinpopfcpgvr.supabase.co';
+        const supabaseAnonKey = 'YOUR_ANON_KEY_HERE';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+        // Tab switching
+        function switchToTab(tab) {
+            document.querySelectorAll('.auth-tabs button').forEach(b => b.classList.remove('on'));
+            document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('on');
+            document.getElementById('panel-' + tab).classList.add('active');
+        }
+
+        document.querySelectorAll('.auth-tabs button').forEach(btn => {
+            btn.addEventListener('click', () => switchToTab(btn.dataset.tab));
+        });
+
+        // Password show/hide
+        window.togglePassword = function(fieldId, iconId) {
+            const input = document.getElementById(fieldId);
+            const icon = document.getElementById(iconId);
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            icon.className = isPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        }
+
+        // Sign In
+        async function signIn() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('error-message');
+            errorEl.classList.remove('visible');
+            errorEl.textContent = '';
+
+            if (!email || !password) {
+                errorEl.textContent = 'Please fill in all fields.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                if (error) throw error;
+                window.location.href = 'index.html';
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.classList.add('visible');
+            }
+        }
+
+        // Sign Up
+        async function signUp() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const successEl = document.getElementById('success-message');
+            successEl.classList.remove('visible');
+            successEl.textContent = '';
+
+            if (!name || !email || !password) {
+                successEl.textContent = 'Please fill in all fields.';
+                successEl.classList.add('visible');
+                return;
+            }
+
+            if (password.length < 6) {
+                successEl.textContent = 'Password must be at least 6 characters.';
+                successEl.classList.add('visible');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: { full_name: name }
+                    }
+                });
+                if (error) throw error;
+                if (data.session) {
+                    window.location.href = 'index.html';
+                } else {
+                    successEl.textContent = 'Check your inbox to confirm your email, then sign in.';
+                    successEl.classList.add('visible');
+                }
+            } catch (err) {
+                successEl.textContent = err.message;
+                successEl.classList.add('visible');
+            }
+        }
+
+        // Reset Password
+        function resetPassword() {
+            const email = prompt('Enter your email to receive a password reset link:');
+            if (!email) return;
+            supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' })
+                .then(() => {
+                    alert('Password reset email sent!');
+                })
+                .catch(err => {
+                    alert('Error: ' + err.message);
+                });
+        }
+
+        // Auto-confirm sign ups (if configured in Supabase)
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                alert('Password reset email sent!');
+            }
+        });
+
+        // Initialize floating particles
+        (function() {
+            const canvas = document.getElementById('fx-canvas');
+            const ctx = canvas.getContext('2d');
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const symbols = ['f(x) = ∫ dx', 'E = mc²', 'v = u + at', 's = rθ', '∇ × B', 'lim x→∞', 'λ', 'π', '∑', 'Δx', 'θ', 'Ω', 'F = ma', 'O(log n)', '∂f/∂x', '∞', '≈'];
+            let width, height, particles = [];
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+
+            function makeParticle() {
+                return {
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    type: Math.floor(Math.random() * 3),
+                    text: symbols[Math.floor(Math.random() * symbols.length)],
+                    size: Math.random() * 10 + 10,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35 - 0.15,
+                    opacity: Math.random() * 0.18 + 0.04,
+                    rot: Math.random() * Math.PI * 2,
+                    vr: (Math.random() - 0.5) * 0.008
+                };
+            }
+
+            function init() {
+                particles = [];
+                const count = Math.min(Math.floor(window.innerWidth / 26), 38);
+                for (let i = 0; i < count; i++) particles.push(makeParticle());
+            }
+
+            function drawFrame() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = `rgba(200,210,225,${p.opacity})`;
+                    if (p.type === 0) {
+                        ctx.font = `${p.size}px "Fira Code", monospace`;
+                        ctx.fillText(p.text, 0, 0);
+                    } else if (p.type === 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, -p.size);
+                        ctx.lineTo(p.size, p.size);
+                        ctx.lineTo(-p.size, p.size);
+                        ctx.closePath();
+                        ctx.stroke();
+                    } else {
+                        ctx.strokeRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    }
+                    ctx.restore();
+                });
+            }
+
+            function loop() {
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rot += p.vr;
+                    if (p.x < -60 || p.x > width + 60 || p.y < -60 || p.y > height + 60) Object.assign(p, makeParticle());
+                });
+                drawFrame();
+                requestAnimationFrame(loop);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+            init();
+            if (reduceMotion) drawFrame();
+            else requestAnimationFrame(loop);
+        })();
+    </script>
+</body>
+</html>
