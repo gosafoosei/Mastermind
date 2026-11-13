@@ -567,9 +567,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Supabase configuration
+        // NOTE: the client must NOT be named `supabase` — the UMD bundle declares a global
+        // `var supabase`, and `const supabase` here would be a parse-time redeclaration
+        // error that kills this entire script block.
         const supabaseUrl = 'https://gfwvubcgddkehekjwnpy.supabase.co';
         const supabaseAnonKey = 'sb_publishable_ZH40LcmIAYmWKOxDyX4p1Q_WyyAWe0w';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        const supabaseReady = !!(window.supabase && window.supabase.createClient);
+        const supabaseClient = supabaseReady ? window.supabase.createClient(supabaseUrl, supabaseAnonKey) : null;
+        if (!supabaseReady) {
+            document.getElementById('auth-card').insertAdjacentHTML('afterbegin',
+                '<div class="error-message visible">Could not load the sign-in service. Check your internet connection and reload the page.</div>');
+        }
 
         // Panel switching (signin / signup / forgot / recovery)
         const tabsBar = document.getElementById('auth-tabs');
@@ -625,7 +633,7 @@
             }
             setBusy(form, true);
             try {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 window.location.href = 'index.html';
             } catch (err) {
@@ -653,7 +661,7 @@
             }
             setBusy(form, true);
             try {
-                const { data, error } = await supabase.auth.signUp({
+                const { data, error } = await supabaseClient.auth.signUp({
                     email,
                     password,
                     options: { data: { full_name: name } }
@@ -678,7 +686,7 @@
             const email = document.getElementById('forgot-email').value.trim();
             setBusy(form, true);
             try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
                     redirectTo: window.location.origin + '/login.html'
                 });
                 if (error) throw error;
@@ -702,7 +710,7 @@
             }
             setBusy(form, true);
             try {
-                const { error } = await supabase.auth.updateUser({ password });
+                const { error } = await supabaseClient.auth.updateUser({ password });
                 if (error) throw error;
                 window.location.href = 'index.html';
             } catch (err) {
@@ -713,7 +721,7 @@
         }
 
         // Arriving from a recovery email link opens the new-password form
-        supabase.auth.onAuthStateChange((event) => {
+        supabaseClient.auth.onAuthStateChange((event) => {
             if (event === 'PASSWORD_RECOVERY') showPanel('recovery');
         });
 
