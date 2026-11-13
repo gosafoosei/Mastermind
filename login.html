@@ -467,49 +467,49 @@
             <h1 class="text-2xl sm:text-3xl font-code font-bold">Mastermind</h1>
             <p class="subtitle">Access the interactive learning suite</p>
 
-            <div class="auth-tabs">
-                <button class="on" data-tab="signin"><i class="icon fa-solid fa-sign-in"></i>Sign In</button>
+            <div class="auth-tabs" id="auth-tabs">
+                <button class="on" data-tab="signin"><i class="icon fa-solid fa-right-to-bracket"></i>Sign In</button>
                 <button data-tab="signup"><i class="icon fa-solid fa-user-plus"></i>Create Account</button>
             </div>
 
-            <div id="panel-signin" class="auth-panel active">
-                <div id="error-message" class="error-message"></div>
+            <form id="panel-signin" class="auth-panel active" onsubmit="signIn(event)">
+                <div id="signin-message" class="error-message"></div>
                 <div class="form-group">
                     <label for="login-email">Email</label>
-                    <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+                    <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" required>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Password</label>
                     <div class="password-wrapper">
-                        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+                        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
                         <button type="button" class="toggle-password" onclick="togglePassword('login-password', 'login-toggle-icon')">
                             <i class="fa-solid fa-eye" id="login-toggle-icon"></i>
                         </button>
                     </div>
                 </div>
                 <div class="auth-actions">
-                    <button class="btn btn-signin" onclick="signIn()">Sign In</button>
-                    <button class="btn btn-signup" onclick="switchToTab('signup')">Create Account</button>
+                    <button type="submit" class="btn btn-signin">Sign In</button>
+                    <button type="button" class="btn btn-signup" onclick="switchToTab('signup')">Create Account</button>
                 </div>
                 <div class="auth-footer">
-                    <a onclick="resetPassword()">Forgot your password?</a>
+                    <a onclick="showPanel('forgot')">Forgot your password?</a>
                 </div>
-            </div>
+            </form>
 
-            <div id="panel-signup" class="auth-panel">
-                <div id="success-message" class="success-message"></div>
+            <form id="panel-signup" class="auth-panel" onsubmit="signUp(event)">
+                <div id="signup-message" class="success-message"></div>
                 <div class="form-group">
                     <label for="signup-name">Full Name</label>
-                    <input type="text" id="signup-name" placeholder="John Doe" autocomplete="name">
+                    <input type="text" id="signup-name" placeholder="John Doe" autocomplete="name" required>
                 </div>
                 <div class="form-group">
                     <label for="signup-email">Email</label>
-                    <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email">
+                    <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" required>
                 </div>
                 <div class="form-group">
                     <label for="signup-password">Password</label>
                     <div class="password-wrapper">
-                        <input type="password" id="signup-password" placeholder="Create a password (min 6 chars)" autocomplete="new-password">
+                        <input type="password" id="signup-password" placeholder="Create a password (min 6 chars)" autocomplete="new-password" minlength="6" required>
                         <button type="button" class="toggle-password" onclick="togglePassword('signup-password', 'signup-toggle-icon')">
                             <i class="fa-solid fa-eye" id="signup-toggle-icon"></i>
                         </button>
@@ -521,13 +521,45 @@
                     </ul>
                 </div>
                 <div class="auth-actions">
-                    <button class="btn btn-signup" onclick="signUp()">Create Account</button>
-                    <button class="btn btn-signin" onclick="switchToTab('signin')">Sign In</button>
+                    <button type="submit" class="btn btn-signup">Create Account</button>
+                    <button type="button" class="btn btn-signin" onclick="switchToTab('signin')">Sign In</button>
                 </div>
-            </div>
+            </form>
+
+            <form id="panel-forgot" class="auth-panel" onsubmit="forgotPassword(event)">
+                <div id="forgot-message" class="error-message"></div>
+                <p class="subtitle" style="text-align: left; margin-bottom: 1.25rem;">Enter your email and we'll send you a password reset link.</p>
+                <div class="form-group">
+                    <label for="forgot-email">Email</label>
+                    <input type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email" required>
+                </div>
+                <div class="auth-actions">
+                    <button type="submit" class="btn btn-signin">Send Reset Link</button>
+                    <button type="button" class="btn btn-ghost" onclick="showPanel('signin')">Back to Sign In</button>
+                </div>
+            </form>
+
+            <form id="panel-recovery" class="auth-panel" onsubmit="updatePassword(event)">
+                <div id="recovery-message" class="success-message"></div>
+                <h1 style="font-size: 1.25rem;">Set a new password</h1>
+                <p class="subtitle" style="text-align: left; margin-bottom: 1.25rem;">Choose a new password for your account.</p>
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="new-password" placeholder="New password (min 6 chars)" autocomplete="new-password" minlength="6" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('new-password', 'new-toggle-icon')">
+                            <i class="fa-solid fa-eye" id="new-toggle-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="auth-actions">
+                    <button type="submit" class="btn btn-signup">Update Password</button>
+                    <button type="button" class="btn btn-ghost" onclick="showPanel('signin')">Back to Sign In</button>
+                </div>
+            </form>
 
             <div class="auth-footer">
-                <p>Powered by Supabase &middot; <a onclick="togglePassword('login-password', 'login-toggle-icon'); togglePassword('signup-password', 'signup-toggle-icon')" style="cursor:pointer">Show password</a></p>
+                <p>Powered by Supabase</p>
             </div>
         </div>
     </div>
@@ -539,17 +571,37 @@
         const supabaseAnonKey = 'sb_publishable_ZH40LcmIAYmWKOxDyX4p1Q_WyyAWe0w';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-        // Tab switching
-        function switchToTab(tab) {
-            document.querySelectorAll('.auth-tabs button').forEach(b => b.classList.remove('on'));
+        // Panel switching (signin / signup / forgot / recovery)
+        const tabsBar = document.getElementById('auth-tabs');
+
+        function showPanel(name) {
+            const tabbed = name === 'signin' || name === 'signup';
+            tabsBar.style.display = tabbed ? 'flex' : 'none';
             document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
-            document.querySelector(`[data-tab="${tab}"]`).classList.add('on');
-            document.getElementById('panel-' + tab).classList.add('active');
+            document.getElementById('panel-' + name).classList.add('active');
+            document.querySelectorAll('.auth-tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+        }
+
+        function switchToTab(tab) {
+            showPanel(tab);
         }
 
         document.querySelectorAll('.auth-tabs button').forEach(btn => {
             btn.addEventListener('click', () => switchToTab(btn.dataset.tab));
         });
+
+        // Inline status messages
+        function setMessage(id, text, kind) {
+            const el = document.getElementById(id);
+            el.textContent = text || '';
+            el.className = text && kind === 'success' ? 'success-message visible' : 'error-message visible';
+            if (!text) el.classList.remove('visible');
+        }
+
+        function setBusy(form, busy) {
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) btn.disabled = busy;
+        }
 
         // Password show/hide
         window.togglePassword = function(fieldId, iconId) {
@@ -561,92 +613,108 @@
         }
 
         // Sign In
-        async function signIn() {
-            const email = document.getElementById('login-email').value;
+        async function signIn(event) {
+            event.preventDefault();
+            const form = event.target;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
-            const errorEl = document.getElementById('error-message');
-            errorEl.classList.remove('visible');
-            errorEl.textContent = '';
-
+            setMessage('signin-message', '');
             if (!email || !password) {
-                errorEl.textContent = 'Please fill in all fields.';
-                errorEl.classList.add('visible');
+                setMessage('signin-message', 'Please fill in all fields.');
                 return;
             }
-
+            setBusy(form, true);
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 window.location.href = 'index.html';
             } catch (err) {
-                errorEl.textContent = err.message;
-                errorEl.classList.add('visible');
+                setMessage('signin-message', err.message);
+            } finally {
+                setBusy(form, false);
             }
         }
 
         // Sign Up
-        async function signUp() {
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
+        async function signUp(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
-            const successEl = document.getElementById('success-message');
-            successEl.classList.remove('visible');
-            successEl.textContent = '';
-
+            setMessage('signup-message', '');
             if (!name || !email || !password) {
-                successEl.textContent = 'Please fill in all fields.';
-                successEl.classList.add('visible');
+                setMessage('signup-message', 'Please fill in all fields.');
                 return;
             }
-
             if (password.length < 6) {
-                successEl.textContent = 'Password must be at least 6 characters.';
-                successEl.classList.add('visible');
+                setMessage('signup-message', 'Password must be at least 6 characters.');
                 return;
             }
-
+            setBusy(form, true);
             try {
                 const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
-                    options: {
-                        data: { full_name: name }
-                    }
+                    options: { data: { full_name: name } }
                 });
                 if (error) throw error;
                 if (data.session) {
                     window.location.href = 'index.html';
                 } else {
-                    successEl.textContent = 'Check your inbox to confirm your email, then sign in.';
-                    successEl.classList.add('visible');
+                    setMessage('signup-message', 'Check your inbox to confirm your email, then sign in.', 'success');
                 }
             } catch (err) {
-                successEl.textContent = err.message;
-                successEl.classList.add('visible');
+                setMessage('signup-message', err.message);
+            } finally {
+                setBusy(form, false);
             }
         }
 
-        // Reset Password
-        function resetPassword() {
-            const email = prompt('Enter your email to receive a password reset link:');
-            if (!email) return;
-            supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' })
-                .then(() => {
-                    alert('Password reset email sent!');
-                })
-                .catch(err => {
-                    alert('Error: ' + err.message);
+        // Forgot password: send reset link
+        async function forgotPassword(event) {
+            event.preventDefault();
+            const form = event.target;
+            const email = document.getElementById('forgot-email').value.trim();
+            setBusy(form, true);
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/login.html'
                 });
+                if (error) throw error;
+                setMessage('forgot-message', 'Reset link sent — check your inbox (and spam folder).', 'success');
+            } catch (err) {
+                setMessage('forgot-message', err.message);
+            } finally {
+                setBusy(form, false);
+            }
         }
 
-        // Auto-confirm sign ups (if configured in Supabase)
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'PASSWORD_RECOVERY') {
-                alert('Password reset email sent!');
+        // Recovery: set a new password
+        async function updatePassword(event) {
+            event.preventDefault();
+            const form = event.target;
+            const password = document.getElementById('new-password').value;
+            setMessage('recovery-message', '');
+            if (password.length < 6) {
+                setMessage('recovery-message', 'Password must be at least 6 characters.');
+                return;
             }
+            setBusy(form, true);
+            try {
+                const { error } = await supabase.auth.updateUser({ password });
+                if (error) throw error;
+                window.location.href = 'index.html';
+            } catch (err) {
+                setMessage('recovery-message', err.message);
+            } finally {
+                setBusy(form, false);
+            }
+        }
+
+        // Arriving from a recovery email link opens the new-password form
+        supabase.auth.onAuthStateChange((event) => {
+            if (event === 'PASSWORD_RECOVERY') showPanel('recovery');
         });
 
         // Initialize floating particles

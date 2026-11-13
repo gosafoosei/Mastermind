@@ -13,6 +13,22 @@
     <script src="vendor/three.min.js"></script>
     <script src="vendor/OrbitControls.js"></script>
     <script src="vendor/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        /* ============ Auth gate: require a Supabase session on the main site ============
+           Skipped when the CDN is unreachable (offline use), so the offline zip keeps working. */
+        (function () {
+            if (!window.supabase || !window.supabase.createClient) return;
+            const client = window.supabase.createClient(
+                'https://gfwvubcgddkehekjwnpy.supabase.co',
+                'sb_publishable_ZH40LcmIAYmWKOxDyX4p1Q_WyyAWe0w'
+            );
+            window.mmAuth = client;
+            client.auth.getSession().then(({ data }) => {
+                if (!data || !data.session) window.location.replace('login.html');
+            });
+        })();
+    </script>
 
     <style>
         html { scroll-behavior: smooth; }
@@ -803,7 +819,11 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
                 <span>SYSTEM ONLINE</span>
             </span>
             <a href="#hub" data-nav="hub" class="navlink">HUB</a>
-            <a href="login.html" class="navlink">LOGIN</a>
+            <a href="login.html" class="navlink" id="nav-login">LOGIN</a>
+            <span id="nav-user" style="display:none;align-items:center;gap:0.75rem;">
+                <span id="nav-username" style="color:rgba(255,255,255,0.8);white-space:nowrap;"></span>
+                <button id="nav-logout" type="button" class="navlink" style="background:none;border:none;font:inherit;padding:0;cursor:pointer;">LOGOUT</button>
+            </span>
             <a href="#physics" data-nav="physics" class="navlink">PHYSICS</a>
             <a href="#circle" data-nav="circle" class="navlink">GEOMETRY</a>
             <a href="#computing" data-nav="computing" class="navlink">COMPUTING</a>
@@ -1653,6 +1673,26 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
             </button>
         </div>
     </div>
+
+    <script>
+        /* ============ Auth header state: show signed-in user + logout ============ */
+        (function () {
+            const client = window.mmAuth;
+            if (!client) return; // offline / CDN blocked: keep plain LOGIN link
+            client.auth.getSession().then(({ data }) => {
+                const user = data && data.session && data.session.user;
+                if (!user) return;
+                const meta = user.user_metadata || {};
+                document.getElementById('nav-login').style.display = 'none';
+                document.getElementById('nav-user').style.display = 'flex';
+                document.getElementById('nav-username').textContent = meta.full_name || user.email || 'Signed in';
+                document.getElementById('nav-logout').addEventListener('click', async () => {
+                    await client.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+            });
+        })();
+    </script>
 
     <script>
         /* ============ Floating background particles (shared site motif) ============ */
