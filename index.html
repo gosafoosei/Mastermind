@@ -6,6 +6,31 @@
     <title>Mastermind Simulations - Visualized Learning</title>
     <meta name="description" content="Mastermind Simulations is an offline-ready interactive learning suite covering projectile motion, circle geometry, computing, and the skeletal system.">
     <link rel="icon" type="image/png" href="assets/mastermind-scholars-logo-circle.png">
+    <link rel="apple-touch-icon" href="assets/mastermind-scholars-logo-circle.png">
+    <link rel="canonical" href="https://mastermindsimulations.vercel.app/">
+    <meta name="theme-color" content="#05070a">
+    <!-- Performance: warm up the origins used after first paint -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://gfwvubcgddkehekjwnpy.supabase.co">
+    <!-- Open Graph / social previews -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Mastermind Simulations">
+    <meta property="og:title" content="Mastermind Simulations - Visualized Learning">
+    <meta property="og:description" content="Mastermind Simulations is an offline-ready interactive learning suite covering projectile motion, circle geometry, computing, and the skeletal system.">
+    <meta property="og:url" content="https://mastermindsimulations.vercel.app/">
+    <meta property="og:image" content="https://mastermindsimulations.vercel.app/assets/mastermind-scholars-logo-circle.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Mastermind Simulations - Visualized Learning">
+    <meta name="twitter:description" content="Mastermind Simulations is an offline-ready interactive learning suite covering projectile motion, circle geometry, computing, and the skeletal system.">
+    <meta name="twitter:image" content="https://mastermindsimulations.vercel.app/assets/mastermind-scholars-logo-circle.png">
+    <!-- Analytics: paste your Google Analytics (gtag.js) snippet here once you create a GA4 property.
+         Replace both G-XXXXXXXXXX placeholders with your measurement ID.
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
+    -->
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebSite","name":"Mastermind Simulations","alternateName":"Mastermind Scholars World","url":"https://mastermindsimulations.vercel.app/","description":"Offline-ready interactive educational simulations for physics, mathematics, computing, and biology.","publisher":{"@type":"Organization","name":"Team Mastermind","logo":{"@type":"ImageObject","url":"https://mastermindsimulations.vercel.app/assets/mastermind-scholars-logo-circle.png"}}}
+    </script>
     <!-- Locally compiled Tailwind CSS -->
     <link rel="stylesheet" href="tailwind.css">
     <!-- Local assets keep the complete classroom site available without internet -->
@@ -798,6 +823,7 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
     </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans antialiased selection:bg-white selection:text-black">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-white focus:text-black focus:font-semibold">Skip to content</a>
 
     <canvas id="fx-canvas"></canvas>
 
@@ -834,7 +860,7 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
         </div>
     </header>
 
-    <main class="relative z-10 flex-1 flex flex-col">
+    <main id="main-content" class="relative z-10 flex-1 flex flex-col">
 
         <!-- ================= VIEW: HUB ================= -->
         <section id="view-hub" class="w-full">
@@ -1625,13 +1651,14 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
     <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 font-code text-xs text-gray-500">
         <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-silver-500"></span>
-            <span>Created by Team Mastermind</span>
+            <span>© <span id="footer-year">2026</span> Team Mastermind · <a href="about.html" class="hover:text-gray-300 transition-colors">About</a> · <a href="contact.html" class="hover:text-gray-300 transition-colors">Contact</a> · <a href="privacy.html" class="hover:text-gray-300 transition-colors">Privacy</a> · <a href="terms.html" class="hover:text-gray-300 transition-colors">Terms</a></span>
         </div>
         <div class="flex gap-6">
             <span>Interactive Classroom Suite</span>
             <span>v1.6.0</span>
         </div>
     </footer>
+    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
 
     <!-- Interactive Lab Selector Modal -->
     <div id="sim-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300" role="dialog" aria-modal="true" aria-labelledby="sim-modal-title">

@@ -6,6 +6,23 @@
     <title>Mastermind · Sign In / Sign Up</title>
     <meta name="description" content="Sign in or create an account to access the Mastermind interactive learning labs.">
     <link rel="icon" type="image/png" href="assets/mastermind-scholars-logo-circle.png">
+    <link rel="apple-touch-icon" href="assets/mastermind-scholars-logo-circle.png">
+    <link rel="canonical" href="https://mastermindsimulations.vercel.app/login.html">
+    <meta name="theme-color" content="#05070a">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://gfwvubcgddkehekjwnpy.supabase.co">
+    <!-- Open Graph / social previews -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Mastermind Simulations">
+    <meta property="og:title" content="Mastermind · Sign In / Sign Up">
+    <meta property="og:description" content="Sign in or create an account to access the Mastermind interactive learning labs.">
+    <meta property="og:url" content="https://mastermindsimulations.vercel.app/login.html">
+    <meta property="og:image" content="https://mastermindsimulations.vercel.app/assets/mastermind-scholars-logo-circle.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Mastermind · Sign In / Sign Up">
+    <meta name="twitter:description" content="Sign in or create an account to access the Mastermind interactive learning labs.">
+    <meta name="twitter:image" content="https://mastermindsimulations.vercel.app/assets/mastermind-scholars-logo-circle.png">
+    <!-- Analytics: paste your Google Analytics (gtag.js) snippet here once you create a GA4 property. -->
     <link rel="stylesheet" href="tailwind.css">
     <link rel="stylesheet" href="vendor/fontawesome.css">
     <style>
@@ -452,6 +469,40 @@
                 padding: 0;
             }
         }
+
+        .auth-page-footer {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            max-width: 80rem;
+            margin: 0 auto;
+            width: calc(100% - 3rem);
+            padding: 1.1rem 0 1.4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-family: 'Fira Code', ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 0.7rem;
+            color: #9ca3af;
+        }
+
+        @media (min-width: 640px) {
+            .auth-page-footer {
+                flex-direction: row;
+            }
+        }
+
+        .auth-page-footer nav a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .auth-page-footer nav a:hover {
+            color: #d1d5db;
+        }
     </style>
 </head>
 <body class="auth-page">
@@ -563,6 +614,16 @@
             </div>
         </div>
     </div>
+
+    <footer class="auth-page-footer">
+        <span>&copy; <span id="footer-year">2026</span> Team Mastermind</span>
+        <nav aria-label="Legal">
+            <a href="about.html">About</a> &middot;
+            <a href="contact.html">Contact</a> &middot;
+            <a href="privacy.html">Privacy Policy</a> &middot;
+            <a href="terms.html">Terms of Use</a>
+        </nav>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -800,6 +861,8 @@
             if (reduceMotion) drawFrame();
             else requestAnimationFrame(loop);
         })();
+
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
