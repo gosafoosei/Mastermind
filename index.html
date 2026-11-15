@@ -1090,8 +1090,8 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
 
             <div id="p-lab" class="card hide">
             <p class="hint">Drag a yellow handle on the circle, or use the controls. Angles snap to whole numbers.</p>
-            <div class="row"><label for="rs">Radius r</label><input type="range" id="rs" min="1" max="20" step="1"><input type="number" id="rn" min="1" max="20" step="1"></div>
-            <div class="row"><label for="ts">Angle θ</label><input type="range" id="ts"><input type="number" id="tn"></div>
+            <div class="row"><label for="rs">Radius r</label><input type="range" id="rs" min="1" max="20" step="1"><input type="number" id="rn" aria-label="Radius value" min="1" max="20" step="1"></div>
+            <div class="row"><label for="ts">Angle θ</label><input type="range" id="ts"><input type="number" id="tn" aria-label="Angle in degrees"></div>
             <div class="opts">
             <div><label for="snap">Angle snap</label><select id="snap"><option value="30">30°</option><option value="15">15°</option><option value="5">5°</option><option value="1">1°</option></select></div>
             <div><label for="pis">Value of π</label><select id="pis"><option value="a">3.14159…</option><option value="b">3.14</option><option value="c">22/7</option></select></div>
@@ -1108,7 +1108,7 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
             <div id="p-prac" class="card hide">
             <h3 style="margin:0 0 6px">Challenge <span id="score" class="num" style="float:right;color:var(--ok)">0 / 0</span></h3>
             <p id="q" style="font-size:1.05rem;margin:6px 0"></p>
-            <div class="row" style="grid-template-columns:1fr auto"><input type="number" id="ans" step="any" placeholder="Your answer" inputmode="decimal"><button class="btn pri" id="chk">Check</button></div>
+            <div class="row" style="grid-template-columns:1fr auto"><input type="number" id="ans" step="any" placeholder="Your answer" aria-label="Your answer" inputmode="decimal"><button class="btn pri" id="chk">Check</button></div>
             <div id="fb" class="fb"></div>
             <div class="chips"><button class="btn" id="rev">Show working</button><button class="btn" id="nxt">New question</button></div>
             <ol class="work" id="pwork"></ol>
@@ -1157,7 +1157,7 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
                             </div>
                             <div id="stack-view" class="min-h-[15rem] flex flex-col justify-end items-center gap-1.5 p-2 rounded-xl bg-black/25 border border-white/5"></div>
                             <div class="flex gap-2">
-                                <input type="number" id="ds-value" class="num-input w-24" min="1" max="99" placeholder="1–99">
+                                <input type="number" id="ds-value" class="num-input w-24" min="1" max="99" placeholder="1–99" aria-label="Stack value">
                                 <button id="btn-push" class="btn-solid flex-1 py-2 rounded-lg font-code text-xs tracking-wider cursor-pointer">PUSH</button>
                                 <button id="btn-pop" class="btn-ghost flex-1 py-2 rounded-lg font-code text-xs tracking-wider cursor-pointer">POP</button>
                             </div>
@@ -1209,7 +1209,7 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
                         <div class="flex flex-wrap items-end gap-3">
                             <div>
                                 <span class="ctl-label block mb-1.5">Target value</span>
-                                <input type="number" id="search-target" class="num-input w-28" min="1" max="99" placeholder="1–99">
+                                <input type="number" id="search-target" class="num-input w-28" min="1" max="99" placeholder="1–99" aria-label="Target value to search">
                             </div>
                             <div>
                                 <span class="ctl-label block mb-1.5">Algorithm</span>
@@ -1375,7 +1375,7 @@ body.wide #panel{left:auto;right:3vw;transform:none;bottom:auto;top:50%;margin-t
                                     <h3 class="ctl-label">Full index — every bone</h3>
                                     <span class="font-code text-[9px] text-gray-500" id="sk-count"></span>
                                 </div>
-                                <input id="sk-search" class="num-input w-full text-[10px] py-1.5 mb-2" placeholder="Search bones…" autocomplete="off">
+                                <input id="sk-search" class="num-input w-full text-[10px] py-1.5 mb-2" placeholder="Search bones…" aria-label="Search bones" autocomplete="off">
                                 <div id="sk-index" class="max-h-64 overflow-y-auto pr-1 space-y-3"></div>
                             </div>
                         </div>
